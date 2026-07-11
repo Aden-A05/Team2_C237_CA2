@@ -24,7 +24,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '', //Dont need to change
-    database: '' //Change based on database
+    database: 'histogram_db' //Change based on database
 });
  
 connection.connect((err) => {
@@ -34,7 +34,7 @@ connection.connect((err) => {
     }
     console.log('Connected to MySQL database');
 });
- 
+
 // Set up view engine
 app.set('view engine', 'ejs');
 //  enable static files
@@ -45,7 +45,16 @@ app.use(express.static('public'));
 app.use(express.urlencoded({
     extended: false
 }))
- 
+
+// Added a simple homepage test to see the design of navbar - Raj
+app.get('/', (req, res) => {
+    res.render('index', {
+        activePage: 'home'
+    });
+});
+
+
+
 //Aden task 
 app.get('/deletePost/:id', (req, res) => {
     const postid = req.params.id

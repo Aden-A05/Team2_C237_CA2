@@ -1,0 +1,335 @@
+/* Basic reset */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(196, 153, 74, 0.12),
+            transparent 35%
+        ),
+        #f4f1ea;
+}
+
+/* Navbar */
+
+.navbar {
+    width: 100%;
+    min-height: 82px;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(18, 28, 46, 0.98),
+            rgba(37, 47, 66, 0.98)
+        );
+
+    border-bottom: 1px solid rgba(213, 174, 96, 0.7);
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.22);
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar::after {
+    content: "";
+
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #d5ae60,
+        #f0d18a,
+        #d5ae60,
+        transparent
+    );
+}
+
+.navbar-container {
+    width: 100%;
+    max-width: 1250px;
+    min-height: 82px;
+
+    margin: 0 auto;
+    padding: 0 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Brand */
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.brand-logo {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f0d18a,
+            #bd8b39
+        );
+
+    color: #162033;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 14px;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 27px;
+    font-weight: bold;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.navbar-brand:hover .brand-logo {
+    transform: rotate(-4deg) scale(1.05);
+
+    box-shadow:
+        0 7px 20px rgba(213, 174, 96, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.brand-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 0.8px;
+}
+
+.brand-tagline {
+    margin-top: 3px;
+
+    color: #d8c6a3;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* Navigation links */
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 6px;
+
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+}
+
+.navbar-link {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 16px;
+
+    color: #e9edf5;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    border-radius: 10px;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.navbar-link svg {
+    width: 18px;
+    height: 18px;
+
+    fill: currentColor;
+
+    transition: transform 0.2s ease;
+}
+
+.navbar-link:hover {
+    color: #f1d58f;
+    background-color: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
+}
+
+.navbar-link:hover svg {
+    transform: scale(1.1);
+}
+
+.navbar-link.active {
+    color: #172033;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f1d58f,
+            #c99b4e
+        );
+
+    box-shadow:
+        0 5px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* Account button */
+
+.account-link {
+    border: 1px solid rgba(213, 174, 96, 0.35);
+}
+
+.account-link:not(.active):hover {
+    border-color: rgba(241, 213, 143, 0.8);
+}
+
+/* Mobile toggle */
+
+.navbar-toggle {
+    display: none;
+}
+
+.navbar-menu-button {
+    display: none;
+
+    width: 44px;
+    height: 44px;
+
+    padding: 10px;
+
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.navbar-menu-button span {
+    display: block;
+
+    width: 100%;
+    height: 2px;
+    margin: 5px 0;
+
+    background-color: #ffffff;
+    border-radius: 10px;
+
+    transition: 0.25s ease;
+}
+
+/* Responsive navbar */
+
+@media screen and (max-width: 850px) {
+    .navbar-container {
+        min-height: 74px;
+        padding: 0 18px;
+        flex-wrap: wrap;
+    }
+
+    .navbar {
+        min-height: 74px;
+    }
+
+    .brand-logo {
+        width: 43px;
+        height: 43px;
+        font-size: 24px;
+    }
+
+    .brand-name {
+        font-size: 21px;
+    }
+
+    .brand-tagline {
+        font-size: 11px;
+    }
+
+    .navbar-menu-button {
+        display: block;
+    }
+
+    .navbar-links {
+        display: none;
+
+        width: 100%;
+        margin-bottom: 15px;
+        padding: 10px;
+
+        flex-direction: column;
+        align-items: stretch;
+
+        background-color: rgba(255, 255, 255, 0.06);
+        border-radius: 14px;
+    }
+
+    .navbar-toggle:checked ~ .navbar-links {
+        display: flex;
+    }
+
+    .navbar-link {
+        width: 100%;
+        padding: 14px 16px;
+    }
+
+    .account-link {
+        border-color: transparent;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .brand-tagline {
+        display: none;
+    }
+
+    .brand-name {
+        font-size: 20px;
+    }
+
+    .navbar-container {
+        padding: 0 14px;
+    }
+}
