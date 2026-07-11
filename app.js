@@ -47,10 +47,16 @@ app.use(express.urlencoded({
 }))
  
 //Aden task 
-// app.get('/', (req, res) => {
-//     connection.query('SELECT * FROM TABLE', (error, results) => {
-//       if (error) throw error;
-//       res.render('index', { results }); // Render HTML page with data
-//     });
-// });
+app.get('/deletePost/:id', (req, res) => {
+    const postid = req.params.id
+    const sql = 'DELETE FROM histogram_table where postId = ?'
+    connection.query(sql,[postid], (error, results) => {
+       if (error){
+        console.log('Error in trying to delete the post:', error)
+        res.redirect('/')
+       };
+       
+       res.redirect('/')
+     });
+});
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
