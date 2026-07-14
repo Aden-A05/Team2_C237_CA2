@@ -2,7 +2,15 @@ const express = require('express');
 const mysql = require('mysql2');
 const app = express();
 const multer = require('multer')
+const session = require('express-session')
+const flash = require('connect-flash')
 
+app.use(session({
+    secret:'secret',
+    resave: falsse, 
+    saveUninitialized:true,
+    cookie: {maxAge:1000*60*60*24*7}
+}));
 
 const PORT = 3000;
 
@@ -21,10 +29,10 @@ const upload = multer({storage:storage})
  
 // Create MySQL connection
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '', //Dont need to change
-    database: 'histogram_db' //Change based on database
+    host: 'C237-asyraf-mysql.mysql.database.azure.com',
+    user: 'c237_011',
+    password: 'c237011@2026!', //Dont need to change
+    database: 'c237_011_team2_HistogramDb' //Change based on database
 });
  
 connection.connect((err) => {
@@ -46,6 +54,27 @@ app.use(express.urlencoded({
     extended: false
 }))
 
+//Custom middleware to check user authentication
+const checkAuthenticated = (req,res,next)=>{
+    if(req.session.user){
+        return next()
+    }else{
+        req.flash('error','Please log in to view this resource');
+        res.redirect('/login')
+    }
+}
+
+
+const checkAdmin = (req,res,next) => {
+    if (req.session.user.role === 'admin'){
+        return next();
+    }else{
+        req.flash('error','Access denied');
+        res.redirect('/dashboard')
+    }
+};
+
+//Routes 
 // Added a simple homepage test to see the design of navbar - Raj
 app.get('/', (req, res) => {
     res.render('index', {
@@ -53,7 +82,12 @@ app.get('/', (req, res) => {
     });
 });
 
+//Dayn task: Adding new information
+app.post('/addPost', upload.single('image'), (req, res) => {
+    const { title, categories, caption } = req.body;
+    const image = req.file ? req.file.filename : null; // multer handles file upload
 
+<<<<<<< HEAD
 // Viewing and Displaying of Information - Ka Fai 
 app.get('/home', (req, res) => {
     const sql = 'SELECT * FROM histogram_table'
@@ -67,6 +101,20 @@ app.get('/home', (req, res) => {
         
     })
 })
+=======
+    const sql = 'INSERT INTO histogram_table (title, categories, image, caption) VALUES (?, ?, ?, ?)';
+    const values = [title, categories, image, caption];
+
+    connection.query(sql, values, (error, results) => {
+        if (error) {
+            console.log('Error inserting new post:', error);
+            return res.redirect('/');
+        }
+        console.log('New post added with ID:', results.insertId);
+        res.redirect('/');
+    });
+});
+>>>>>>> 422bb98afcdef264838731c8d99651bf0b2c050f
 
 //Aden task 
 app.get('/deletePost/:id', (req, res) => {
