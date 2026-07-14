@@ -87,8 +87,6 @@ app.post('/addPost', upload.single('image'), (req, res) => {
     const { title, categories, caption } = req.body;
     const image = req.file ? req.file.filename : null; // multer handles file upload
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // Viewing and Displaying of Information - Ka Fai 
 app.get('/home', (req, res) => {
     const sql = 'SELECT * FROM histogram_table'
@@ -102,9 +100,7 @@ app.get('/home', (req, res) => {
         
     })
 })
-=======
-=======
->>>>>>> 422bb98afcdef264838731c8d99651bf0b2c050f
+
     const sql = 'INSERT INTO histogram_table (title, categories, image, caption) VALUES (?, ?, ?, ?)';
     const values = [title, categories, image, caption];
 
@@ -117,10 +113,6 @@ app.get('/home', (req, res) => {
         res.redirect('/');
     });
 });
-<<<<<<< HEAD
->>>>>>> 422bb98afcdef264838731c8d99651bf0b2c050f
-=======
->>>>>>> 422bb98afcdef264838731c8d99651bf0b2c050f
 
 //Aden task 
 app.get('/deletePost/:id', (req, res) => {
