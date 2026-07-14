@@ -83,6 +83,11 @@ app.get('/', (req, res) => {
 });
 
 //Dayn task: Adding new information
+app.get('/addPost', (req, res) => {
+    // Render the addPost.ejs form page
+    res.render('addPost', { activePage: 'addPost' });
+});
+
 app.post('/addPost', upload.single('image'), (req, res) => {
     const { title, categories, caption } = req.body;
     const image = req.file ? req.file.filename : null; // multer handles file upload
