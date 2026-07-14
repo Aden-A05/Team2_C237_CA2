@@ -53,7 +53,23 @@ app.get('/', (req, res) => {
     });
 });
 
+//Dayn task: Adding new information
+app.post('/addPost', upload.single('image'), (req, res) => {
+    const { title, categories, caption } = req.body;
+    const image = req.file ? req.file.filename : null; // multer handles file upload
 
+    const sql = 'INSERT INTO histogram_table (title, categories, image, caption) VALUES (?, ?, ?, ?)';
+    const values = [title, categories, image, caption];
+
+    connection.query(sql, values, (error, results) => {
+        if (error) {
+            console.log('Error inserting new post:', error);
+            return res.redirect('/');
+        }
+        console.log('New post added with ID:', results.insertId);
+        res.redirect('/');
+    });
+});
 
 //Aden task 
 app.get('/deletePost/:id', (req, res) => {
