@@ -54,18 +54,31 @@ app.get('/', (req, res) => {
 });
 
 
+// Viewing and Displaying of Information - Ka Fai 
+app.get('/home', (req, res) => {
+    const sql = 'SELECT * FROM histogram_table'
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.log('Error in viewing information', error)
+            res.send('Error retrieving data')
+        } else {
+            res.render('home', { histogram_table : results })
+        } 
+        
+    })
+})
 
 //Aden task 
 app.get('/deletePost/:id', (req, res) => {
     const postid = req.params.id
     const sql = 'DELETE FROM histogram_table where postId = ?'
-    connection.query(sql,[postid], (error, results) => {
+    connection.query(sql,[postId], (error, results) => {
        if (error){
         console.log('Error in trying to delete the post:', error)
-        res.redirect('/')
+        res.redirect('/home')
        };
        
-       res.redirect('/')
+       res.redirect('/home')
      });
 });
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
