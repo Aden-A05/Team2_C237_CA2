@@ -82,29 +82,38 @@ app.get('/', (req, res) => {
     });
 });
 
-//Dayn task: Adding new information
+// Dayn task: Adding new information
 app.get('/addPost', (req, res) => {
     // Render the addPost.ejs form page
     res.render('addPost', { activePage: 'addPost' });
 });
 
 app.post('/addPost', upload.single('image'), (req, res) => {
+    // Extract data from the form
     const { title, categories, caption } = req.body;
-    const image = req.file ? req.file.filename : null; // multer handles file upload
+    let image;
 
-// Viewing and Displaying of Information - Ka Fai 
-app.get('/home', (req, res) => {
-    const sql = 'SELECT * FROM histogram_table'
-    connection.query(sql, (error, results) => {
+    // Handle file upload via Multer
+    if (req.file) {
+        image = req.file.filename; // store only the filename
+    } else {
+        image = null; // fallback if no file uploaded
+    }
+
+    // SQL insert query
+    const sql = 'INSERT INTO histogram_table (title, categories, image, caption) VALUES (?, ?, ?, ?)';
+    const values = [title, categories, image, caption];
+
+    // Execute query
+    connection.query(sql, values, (error, results) => {
         if (error) {
-            console.log('Error in viewing information', error)
-            res.send('Error retrieving data')
-        } else {
-            res.render('home', { histogram_table : results })
-        } 
-        
-    })
-})
+            console.log('Error inserting new post:', error);
+            return res.redirect('/addPost'); // stay on form if error
+        }
+        console.log('New post added with ID:', results.insertId);
+        res.redirect('/'); // redirect to homepage to view posts
+    });
+});
 
     const sql = 'INSERT INTO histogram_table (title, categories, image, caption) VALUES (?, ?, ?, ?)';
     const values = [title, categories, image, caption];
