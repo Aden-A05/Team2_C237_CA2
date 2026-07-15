@@ -26,13 +26,15 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({storage:storage})
- 
+
+
+
 // Create MySQL connection
 const connection = mysql.createConnection({
     host: 'C237-asyraf-mysql.mysql.database.azure.com',
     user: 'c237_011',
     password: 'c237011@2026!', //Dont need to change
-    database: 'c237_011_team2_HistogramDb', //Change based on database
+    database: 'c237_011_team2_histogramdb', //Change based on database
     ssl: {
         rejectUnauthorized: true
     }
@@ -67,13 +69,166 @@ const checkAuthenticated = (req,res,next)=>{
     }
 }
 
+// Registering Account - Raj
+
+app.get('/register',(req,res)=>{
+
+    res.render('register');
+
+});
+
+
+
+app.post('/register',(req,res)=>{
+
+
+    const {
+        name,
+        email,
+        password,
+        role
+    } = req.body;
+
+
+
+    const sql = `
+    INSERT INTO user_credentials
+    (name, email, password, role)
+    VALUES (?, ?, SHA1(?), ?)
+    `;
+
+
+
+    const values = [
+        name,
+        email,
+        password,
+        role
+    ];
+
+
+
+    connection.query(
+        sql,
+        values,
+        (error,result)=>{
+
+
+            if(error){
+
+                console.log(
+                    "Registration Error:",
+                    error
+                );
+
+                return res.redirect('/register');
+
+            }
+
+
+
+            console.log(
+                "New user created:",
+                result.insertId
+            );
+
+
+            res.redirect('/login');
+
+
+        }
+    );
+
+
+});
+// Log in - Raj
+app.get('/login',(req,res)=>{
+
+    res.render('login');
+
+});
+
+
+
+app.post('/login',(req,res)=>{
+
+
+    const {
+        email,
+        password
+    } = req.body;
+
+
+
+    const sql = `
+    SELECT *
+    FROM user_credentials
+    WHERE email = ?
+    AND password = SHA1(?)
+    `;
+
+
+
+    connection.query(
+        sql,
+        [
+            email,
+            password
+        ],
+        (error,result)=>{
+
+
+            if(error){
+
+                console.log(error);
+                return res.redirect('/login');
+
+            }
+
+
+
+            if(result.length > 0){
+
+
+                req.session.user = result[0];
+
+
+                res.redirect('/home');
+
+
+            }
+
+            else{
+
+
+                res.send("Invalid email or password");
+
+
+            }
+
+
+        }
+    );
+
+
+});
+
+// Log out - Raj
+
+app.get('/logout',(req,res)=>{
+
+    req.session.destroy();
+
+    res.redirect('/login');
+
+});
 
 const checkAdmin = (req,res,next) => {
     if (req.session.user.role === 'admin'){
         return next();
     }else{
         req.flash('error','Access denied');
-        res.redirect('/dashboard')
+        res.redirect('/home')
     }
 };
 
