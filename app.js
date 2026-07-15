@@ -267,7 +267,19 @@ app.post('/addPost', upload.single('image'), (req, res) => {
     });
 });
 
-
+// Ka Fai Viewing and displaying information
+app.get('/home', checkAuthenticated, (req, res) => {
+    const sql = 'SELECT * FROM histogram_table'
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.log('Error in viewing information', error)
+            res.send('Error retrieving data')
+        } else {
+            res.render('home', { histogram_table : results })
+        } 
+        
+    })
+})
 
 //Aden Delete post task 
 app.get('/deletePost/:id',checkAuthenticated ,(req, res) => {
