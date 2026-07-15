@@ -7,7 +7,7 @@ const flash = require('connect-flash')
 
 app.use(session({
     secret:'secret',
-    resave: falsse, 
+    resave: false, 
     saveUninitialized:true,
     cookie: {maxAge:1000*60*60*24*7}
 }));
@@ -32,7 +32,10 @@ const connection = mysql.createConnection({
     host: 'C237-asyraf-mysql.mysql.database.azure.com',
     user: 'c237_011',
     password: 'c237011@2026!', //Dont need to change
-    database: 'c237_011_team2_HistogramDb' //Change based on database
+    database: 'c237_011_team2_HistogramDb', //Change based on database
+    ssl: {
+        rejectUnauthorized: true
+    }
 });
  
 connection.connect((err) => {
@@ -75,12 +78,6 @@ const checkAdmin = (req,res,next) => {
 };
 
 //Routes 
-// Added a simple homepage test to see the design of navbar - Raj
-app.get('/', (req, res) => {
-    res.render('index', {
-        activePage: 'home'
-    });
-});
 
 // Dayn task: Adding new information
 app.get('/addPost', (req, res) => {
@@ -115,30 +112,51 @@ app.post('/addPost', upload.single('image'), (req, res) => {
     });
 });
 
-    const sql = 'INSERT INTO histogram_table (title, categories, image, caption) VALUES (?, ?, ?, ?)';
-    const values = [title, categories, image, caption];
 
-    connection.query(sql, values, (error, results) => {
-        if (error) {
-            console.log('Error inserting new post:', error);
-            return res.redirect('/');
-        }
-        console.log('New post added with ID:', results.insertId);
-        res.redirect('/');
-    });
-});
 
-//Aden task 
-app.get('/deletePost/:id', (req, res) => {
+//Aden Delete post task 
+app.get('/deletePost/:id',checkAuthenticated ,(req, res) => {
     const postid = req.params.id
-    const sql = 'DELETE FROM histogram_table where postId = ?'
-    connection.query(sql,[postId], (error, results) => {
-       if (error){
+    const user_role = req.session.user.role
+    const user_id = req.session.user.user_id
+    
+    //SQL statment to delete the post : 
+    const sql_2 = 'DELETE FROM histogram_table WHERE postId = ?'
+
+    //SQL statement to extract the post 
+    const sql_1 = 'SELECT * FROM histogram_table WHERE postId = ?'
+    connection.query(sql_1,[postid], (error, results) => {
+    if (error){
         console.log('Error in trying to delete the post:', error)
-        res.redirect('/home')
-       };
-       
-       res.redirect('/home')
-     });
-});
+        return res.redirect('/home')
+        }else{
+        // check if the post exsits 
+        if(results.length === 0){
+            req.flash('error','Post not found')
+            return res.redirect('/home')        
+        }
+        const extracted_post = results[0]
+
+        //Variable that stores the result if the user is admin
+        const is_admin = user_role === 'admin'
+        //variable that store the result if the user is the owner of the post
+        const is_owner = user_id === extracted_post.user_id
+
+         if(is_admin === true || is_owner === true ){
+         connection.query(sql_2,[postid], (error, results) => {
+            if (error){
+                console.log('Error in trying to delete the post:', error)
+                return res.redirect('/home')
+                }else{return res.redirect('/home')} // Redirect user back to home page when the delete operation is successfull
+            });
+        }else{ //If the user is not the owner of the post and not the admin 
+        req.flash('error','You dont have the permission to delete other people post.');
+            return res.redirect('/home') }
+
+        };
+    });
+
+ 
+    });
+
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
