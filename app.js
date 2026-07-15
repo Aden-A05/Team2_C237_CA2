@@ -69,6 +69,7 @@ const checkAuthenticated = (req,res,next)=>{
     }
 }
 
+//Routes 
 // Registering Account - Raj
 
 app.get('/register',(req,res)=>{
@@ -223,16 +224,15 @@ app.get('/logout',(req,res)=>{
 
 });
 
-const checkAdmin = (req,res,next) => {
-    if (req.session.user.role === 'admin'){
-        return next();
-    }else{
-        req.flash('error','Access denied');
-        res.redirect('/home')
-    }
-};
+// const checkAdmin = (req,res,next) => {
+//     if (req.session.user.role === 'admin'){
+//         return next();
+//     }else{
+//         req.flash('error','Access denied');
+//         res.redirect('/home')
+//     }
+// };
 
-//Routes 
 
 // Dayn task: Adding new information
 app.get('/addPost', (req, res) => {
