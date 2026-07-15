@@ -268,7 +268,7 @@ app.post('/addPost', upload.single('image'), (req, res) => {
 });
 
 // Ka Fai Viewing and displaying information
-app.get('/home', (req, res) => {
+app.get('/home', checkAuthenticated, (req, res) => {
     const sql = 'SELECT * FROM histogram_table'
     connection.query(sql, (error, results) => {
         if (error) {
