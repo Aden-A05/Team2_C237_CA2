@@ -39,6 +39,8 @@ const connection = mysql.createConnection({
         rejectUnauthorized: true
     }
 });
+
+app.use(flash())
  
 connection.connect((err) => {
     if (err) {
@@ -143,7 +145,7 @@ app.post('/register',(req,res)=>{
 
 });
 // Log in - Raj
-app.get('/login',(req,res)=>{
+app.get('/',(req,res)=>{
 
     res.render('login');
 
@@ -151,7 +153,7 @@ app.get('/login',(req,res)=>{
 
 
 
-app.post('/login',(req,res)=>{
+app.post('/',(req,res)=>{
 
 
     const {
@@ -275,14 +277,14 @@ app.get('/home', checkAuthenticated, (req, res) => {
             console.log('Error in viewing information', error)
             res.send('Error retrieving data')
         } else {
-            res.render('home', { histogram_table : results })
+            res.render('home', { histogram_table : results , activePage: 'home',errorMessage: req.flash('error')})
         } 
         
     })
 })
 
 //Aden Delete post task 
-app.get('/deletePost/:id',checkAuthenticated ,(req, res) => {
+app.post('/deletePost/:id',checkAuthenticated ,(req, res) => {
     const postid = req.params.id
     const user_role = req.session.user.role
     const user_id = req.session.user.user_id
