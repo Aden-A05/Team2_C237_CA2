@@ -219,6 +219,7 @@ app.get('/addPost', (req, res) => {
     });
 });
 
+// Add post - Done by dayn
 app.post('/addPost', upload.single('image'), (req, res) => {
     const { title, categories, caption } = req.body;
     const image = req.file ? req.file.filename : null;
