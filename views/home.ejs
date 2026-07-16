@@ -88,9 +88,12 @@
               <p class="card-text"><strong>Category:</strong> <%= histogram_table[hp].categories %></p>
               <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top" alt="<%= histogram_table[hp].title %>">
               <p class="card-text"><%= histogram_table[hp].caption %></p>
+              <!-- Aden Delete part -->
+              <%if(user.user_id === histogram_table[hp].user_id){%>
               <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
                 <button class="btn btn-danger">Delete</button>
               </form>
+              <%}%>
             </div>
           </div>
         </div>
