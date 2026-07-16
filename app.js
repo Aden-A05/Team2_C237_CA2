@@ -309,7 +309,7 @@ app.post('/deletePost/:id',checkAuthenticated ,(req, res) => {
  
     });
 
-// Admin Home - view all posts
+// Admin Home - view all posts - Done by Ka Fai
 app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
     const sql = 'SELECT * FROM histogram_table ORDER BY postId DESC';
     connection.query(sql, (error, results) => {
@@ -327,7 +327,7 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
     });
 });
 
-// Admin Analytics Dashboard
+// Admin Analytics Dashboard - Done by Ka Fai
 app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
     const sqlPosts = 'SELECT COUNT(*) AS totalPosts FROM histogram_table';
     const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';
