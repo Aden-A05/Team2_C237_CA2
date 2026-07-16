@@ -212,36 +212,38 @@ const checkAdmin = (req, res, next) => {
 
 // Dayn task: Adding new information
 app.get('/addPost', (req, res) => {
-    // Render the addPost.ejs form page
-    res.render('addPost', { activePage: 'addPost' });
+    res.render('add', { 
+        activePage: 'addPost',
+        user: req.session.user,
+        errorMessage: req.flash('error')
+    });
 });
 
 app.post('/addPost', upload.single('image'), (req, res) => {
-    // Extract data from the form
     const { title, categories, caption } = req.body;
-    let image;
+    const image = req.file ? req.file.filename : null;
+    const user_id = req.session.user.user_id
 
-    // Handle file upload via Multer
-    if (req.file) {
-        image = req.file.filename; // store only the filename
-    } else {
-        image = null; // fallback if no file uploaded
-    }
+    const sql = 'INSERT INTO histogram_table (title, categories, image, caption, user_id) VALUES (?, ?, ?, ?, ?)';
+    const values = [title, categories, image, caption, user_id];
 
-    // SQL insert query
-    const sql = 'INSERT INTO histogram_table (title, categories, image, caption) VALUES (?, ?, ?, ?)';
-    const values = [title, categories, image, caption];
-
-    // Execute query
     connection.query(sql, values, (error, results) => {
         if (error) {
             console.log('Error inserting new post:', error);
-            return res.redirect('/addPost'); // stay on form if error
+            return res.redirect('/home');
         }
+
         console.log('New post added with ID:', results.insertId);
-        res.redirect('/'); // redirect to homepage to view posts
+
+        // Redirect based on role
+        if (req.session.user && req.session.user.role === 'admin') {
+            res.redirect('/admin/home');
+        } else {
+            res.redirect('/home');
+        }
     });
 });
+
 
 // Ka Fai Viewing and displaying information
 app.get('/home', checkAuthenticated, (req, res) => {

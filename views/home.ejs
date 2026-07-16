@@ -58,21 +58,21 @@
   <% if (user && user.role === 'admin' && activePage === 'adminHome') { %>
     <h2>All User Posts (Admin View)</h2>
     <div class="row">
-      <% histogram_table.forEach(post => { %>
+      <% for(let hp = 0; hp < histogram_table.length; hp ++) { %>
         <div class="col-md-4 mb-4">
           <div class="card shadow-sm">
-            <img src="/images/<%= post.image %>" class="card-img-top" alt="<%= post.title %>">
+            <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top" alt="<%= histogram_table[hp].title %>">
             <div class="card-body">
-              <h5 class="card-title"><%= post.title %></h5>
-              <p class="card-text"><strong>Category:</strong> <%= post.categories %></p>
-              <p class="card-text"><%= post.caption %></p>
-              <form action="/deletePost/<%= post.postId %>" method="post">
+              <h5 class="card-title"><%= histogram_table[hp].title %></h5>
+              <p class="card-text"><strong>Category:</strong> <%= histogram_table[hp].categories %></p>
+              <p class="card-text"><%= histogram_table[hp].caption %></p>
+              <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
                 <button class="btn btn-danger">Delete</button>
               </form>
             </div>
           </div>
         </div>
-      <% }) %>
+      <% } %>
     </div>
   <% } %>
 
@@ -80,21 +80,21 @@
   <% if (!user || user.role !== 'admin') { %>
     <h2>Histogram Entries</h2>
     <div class="row">
-      <% histogram_table.forEach(post => { %>
+      <% for(let hp = 0; hp < histogram_table.length; hp ++) { %>
         <div class="col-md-4 mb-4">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><%= post.title %></h5>
-              <p class="card-text"><strong>Category:</strong> <%= post.categories %></p>
-              <img src="/images/<%= post.image %>" class="card-img-top" alt="<%= post.title %>">
-              <p class="card-text"><%= post.caption %></p>
-              <form action="/deletePost/<%= post.postId %>" method="post">
+              <h5 class="card-title"><%= histogram_table[hp].title %></h5>
+              <p class="card-text"><strong>Category:</strong> <%= histogram_table[hp].categories %></p>
+              <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top" alt="<%= histogram_table[hp].title %>">
+              <p class="card-text"><%= histogram_table[hp].caption %></p>
+              <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
                 <button class="btn btn-danger">Delete</button>
               </form>
             </div>
           </div>
         </div>
-      <% }) %>
+      <% } %>
     </div>
   <% } %>
 </body>
