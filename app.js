@@ -153,15 +153,8 @@ app.get('/',(req,res)=>{
 
 
 
-app.post('/',(req,res)=>{
-
-
-    const {
-        email,
-        password
-    } = req.body;
-
-
+app.post('/', (req, res) => {
+    const { email, password } = req.body;
 
     const sql = `
     SELECT *
@@ -170,51 +163,27 @@ app.post('/',(req,res)=>{
     AND password = SHA1(?)
     `;
 
-
-
-    connection.query(
-        sql,
-        [
-            email,
-            password
-        ],
-        (error,result)=>{
-
-
-            if(error){
-
-                console.log(error);
-                return res.redirect('/login');
-
-            }
-
-
-
-            if(result.length > 0){
-
-
-                req.session.user = result[0];
-
-
-                res.redirect('/home');
-
-
-            }
-
-            else{
-
-
-                res.send("Invalid email or password");
-
-
-            }
-
-
+    connection.query(sql, [email, password], (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.redirect('/login');
         }
-    );
 
+        if (result.length > 0) {
+            req.session.user = result[0];
 
+            // Redirect based on role
+            if (req.session.user.role === 'admin') {
+                res.redirect('/admin/dashboard');
+            } else {
+                res.redirect('/home');
+            }
+        } else {
+            res.send("Invalid email or password");
+        }
+    });
 });
+
 
 // Log out - Raj
 
@@ -226,14 +195,19 @@ app.get('/logout',(req,res)=>{
 
 });
 
-// const checkAdmin = (req,res,next) => {
-//     if (req.session.user.role === 'admin'){
-//         return next();
-//     }else{
-//         req.flash('error','Access denied');
-//         res.redirect('/home')
-//     }
-// };
+const checkAdmin = (req, res, next) => {
+    if (!req.session.user) {
+        req.flash('error', 'Please log in to view this resource');
+        return res.redirect('/login');
+    }
+
+    if (req.session.user.role === 'admin') {
+        return next();
+    } else {
+        req.flash('error', 'Access denied. Admins only.');
+        return res.redirect('/adminDashboard');
+    }
+};
 
 
 // Dayn task: Adding new information
@@ -277,7 +251,11 @@ app.get('/home', checkAuthenticated, (req, res) => {
             console.log('Error in viewing information', error)
             res.send('Error retrieving data')
         } else {
-            res.render('home', { histogram_table : results , activePage: 'home',errorMessage: req.flash('error')})
+            res.render('home', { 
+                histogram_table : results, 
+                activePage: 'home', 
+                user: req.session.user, 
+                errorMessage: req.flash('error')})
         } 
         
     })
@@ -316,7 +294,7 @@ app.post('/deletePost/:id',checkAuthenticated ,(req, res) => {
             if (error){
                 console.log('Error in trying to delete the post:', error)
                 return res.redirect('/home')
-                }else{return res.redirect('/home')} // Redirect user back to home page when the delete operation is successfull
+                }else{return res.redirect('/admin/home')} // Redirect user back to home page when the delete operation is successfull
             });
         }else{ //If the user is not the owner of the post and not the admin 
         req.flash('error','You dont have the permission to delete other people post.');
@@ -327,5 +305,60 @@ app.post('/deletePost/:id',checkAuthenticated ,(req, res) => {
 
  
     });
+
+// Admin Home - view all posts
+app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
+    const sql = 'SELECT * FROM histogram_table ORDER BY postId DESC';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.log('Error in viewing information', error);
+            res.send('Error retrieving data');
+        } else {
+            res.render('home', {
+                activePage: 'adminHome',
+                histogram_table: results,
+                user: req.session.user,
+                errorMessage: req.flash('error')
+            });
+        }
+    });
+});
+
+// Admin Analytics Dashboard
+app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
+    const sqlPosts = 'SELECT COUNT(*) AS totalPosts FROM histogram_table';
+    const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';
+    const sqlCategories = 'SELECT categories, COUNT(*) AS count FROM histogram_table GROUP BY categories';
+
+    connection.query(sqlPosts, (err1, postsResult) => {
+        if (err1) {
+            console.log('Error fetching posts count:', err1);
+            return res.send('Error fetching posts count');
+        }
+
+        connection.query(sqlUsers, (err2, usersResult) => {
+            if (err2) {
+                console.log('Error fetching users count:', err2);
+                return res.send('Error fetching users count');
+            }
+
+            connection.query(sqlCategories, (err3, categoriesResult) => {
+                if (err3) {
+                    console.log('Error fetching categories data:', err3);
+                    return res.send('Error fetching categories data');
+                }
+
+                res.render('home', {
+                    activePage: 'adminDashboard',
+                    totalPosts: postsResult[0].totalPosts,
+                    totalUsers: usersResult[0].totalUsers,
+                    categoriesData: categoriesResult,
+                    user: req.session.user,
+                    errorMessage: req.flash('error')
+                });
+            });
+        });
+    });
+});
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
