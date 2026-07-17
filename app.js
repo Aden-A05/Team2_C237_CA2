@@ -262,6 +262,193 @@ app.get('/home', checkAuthenticated, (req, res) => {
     })
 })
 
+
+// Evan - Part 4: Editing existing information
+
+// Open the edit form
+app.get('/editPost/:id', checkAuthenticated, (req, res) => {
+    const postId = req.params.id;
+
+    const sql = `
+        SELECT *
+        FROM histogram_table
+        WHERE postId = ?
+    `;
+
+    connection.query(sql, [postId], (error, results) => {
+        if (error) {
+            console.log('Error retrieving post:', error);
+            return res.redirect('/home');
+        }
+
+        if (results.length === 0) {
+            req.flash('error', 'Post not found.');
+            return res.redirect('/home');
+        }
+
+        const post = results[0];
+
+        const isAdmin =
+            req.session.user.role === 'admin';
+
+        const isOwner =
+            Number(req.session.user.user_id) ===
+            Number(post.user_id);
+
+        // Normal users can edit only their own posts
+        if (!isAdmin && !isOwner) {
+            req.flash(
+                'error',
+                'You do not have permission to edit this post.'
+            );
+
+            return res.redirect('/home');
+        }
+
+        res.render('edit', {
+            post: post,
+            activePage: 'editPost',
+            user: req.session.user,
+            errorMessage: req.flash('error')
+        });
+    });
+});
+
+
+// Save the edited information
+app.post(
+    '/editPost/:id',
+    checkAuthenticated,
+    upload.single('image'),
+    (req, res) => {
+        const postId = req.params.id;
+
+        const {
+            title,
+            categories,
+            caption
+        } = req.body;
+
+        // Server-side validation
+        if (
+            !title ||
+            !categories ||
+            !caption ||
+            !caption.trim()
+        ) {
+            req.flash(
+                'error',
+                'Title, category and caption are required.'
+            );
+
+            return res.redirect(`/editPost/${postId}`);
+        }
+
+        if (caption.length > 300) {
+            req.flash(
+                'error',
+                'Caption cannot exceed 300 characters.'
+            );
+
+            return res.redirect(`/editPost/${postId}`);
+        }
+
+        // Retrieve the original post first
+        const selectSql = `
+            SELECT *
+            FROM histogram_table
+            WHERE postId = ?
+        `;
+
+        connection.query(
+            selectSql,
+            [postId],
+            (selectError, results) => {
+                if (selectError) {
+                    console.log(
+                        'Error checking post:',
+                        selectError
+                    );
+
+                    return res.redirect('/home');
+                }
+
+                if (results.length === 0) {
+                    req.flash('error', 'Post not found.');
+                    return res.redirect('/home');
+                }
+
+                const post = results[0];
+
+                const isAdmin =
+                    req.session.user.role === 'admin';
+
+                const isOwner =
+                    Number(req.session.user.user_id) ===
+                    Number(post.user_id);
+
+                if (!isAdmin && !isOwner) {
+                    req.flash(
+                        'error',
+                        'You do not have permission to edit this post.'
+                    );
+
+                    return res.redirect('/home');
+                }
+
+                // Keep the old image if no new image is selected
+                const image = req.file
+                    ? req.file.filename
+                    : post.image;
+
+                const updateSql = `
+                    UPDATE histogram_table
+                    SET title = ?,
+                        categories = ?,
+                        image = ?,
+                        caption = ?
+                    WHERE postId = ?
+                `;
+
+                const values = [
+                    title.trim(),
+                    categories,
+                    image,
+                    caption.trim(),
+                    postId
+                ];
+
+                connection.query(
+                    updateSql,
+                    values,
+                    (updateError) => {
+                        if (updateError) {
+                            console.log(
+                                'Error updating post:',
+                                updateError
+                            );
+
+                            req.flash(
+                                'error',
+                                'Unable to update the post.'
+                            );
+
+                            return res.redirect(
+                                `/editPost/${postId}`
+                            );
+                        }
+
+                        if (isAdmin) {
+                            return res.redirect('/admin/home');
+                        }
+
+                        res.redirect('/home');
+                    }
+                );
+            }
+        );
+    }
+);
 //Aden Delete post task 
 app.post('/deletePost/:id',checkAuthenticated ,(req, res) => {
     const postid = req.params.id
