@@ -19,7 +19,7 @@
     <div class="navbar-links">
 
       <!-- Normal user links -->
-      <a href="/" class="navbar-link <%= activePage === 'home' ? 'active' : '' %>">
+      <a href="/home" class="navbar-link <%= activePage === 'home' ? 'active' : '' %>">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3V10.8z"/>
         </svg>
@@ -32,6 +32,13 @@
         </svg>
         <span>Add Post</span>
       </a>
+    <a href="/logout" class="navbar-link logout-link">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+       <path d="M10 17v-2h4V9h-4V7h6v10h-6zm-1-3 1.4-1.4L8.8 11H3V9h5.8l1.6-1.6L9 6l-4 4 4 4z"/>
+     </svg>
+
+  <span>Log Out</span>
+</a>
 
       <!-- Admin-only links -->
       <% if (user && user.role === 'admin') { %>

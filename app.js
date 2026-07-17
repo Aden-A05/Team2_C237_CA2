@@ -73,7 +73,45 @@ const checkAuthenticated = (req,res,next)=>{
 
 //Routes 
 // Registering Account - Raj
+// Log in - Raj
+app.get('/',(req,res)=>{
 
+    res.render('login');
+
+});
+
+
+
+app.post('/', (req, res) => {
+    const { email, password } = req.body;
+
+    const sql = `
+    SELECT *
+    FROM user_credentials
+    WHERE email = ?
+    AND password = SHA1(?)
+    `;
+
+    connection.query(sql, [email, password], (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.redirect('/login');
+        }
+
+        if (result.length > 0) {
+            req.session.user = result[0];
+
+            // Redirect based on role
+            if (req.session.user.role === 'admin') {
+                res.redirect('/admin/dashboard');
+            } else {
+                res.redirect('/home');
+            }
+        } else {
+            res.send("Invalid email or password");
+        }
+    });
+});
 app.get('/register',(req,res)=>{
 
     res.render('register');
@@ -136,7 +174,7 @@ app.post('/register',(req,res)=>{
             );
 
 
-            res.redirect('/login');
+            res.redirect('/');
 
 
         }
@@ -144,46 +182,6 @@ app.post('/register',(req,res)=>{
 
 
 });
-// Log in - Raj
-app.get('/',(req,res)=>{
-
-    res.render('login');
-
-});
-
-
-
-app.post('/', (req, res) => {
-    const { email, password } = req.body;
-
-    const sql = `
-    SELECT *
-    FROM user_credentials
-    WHERE email = ?
-    AND password = SHA1(?)
-    `;
-
-    connection.query(sql, [email, password], (error, result) => {
-        if (error) {
-            console.log(error);
-            return res.redirect('/login');
-        }
-
-        if (result.length > 0) {
-            req.session.user = result[0];
-
-            // Redirect based on role
-            if (req.session.user.role === 'admin') {
-                res.redirect('/admin/dashboard');
-            } else {
-                res.redirect('/home');
-            }
-        } else {
-            res.send("Invalid email or password");
-        }
-    });
-});
-
 
 // Log out - Raj
 
@@ -191,7 +189,7 @@ app.get('/logout',(req,res)=>{
 
     req.session.destroy();
 
-    res.redirect('/login');
+    res.redirect('/');
 
 });
 

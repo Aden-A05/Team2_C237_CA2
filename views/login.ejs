@@ -1,68 +1,107 @@
 <!DOCTYPE html>
 
-<html>
-
 <head>
-<title>Login</title>
-</head>
+    <meta charset="UTF-8">
 
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | Histogram</title>
+
+    <link rel="stylesheet" href="/css/login.css">
+</head>
 
 <body>
 
+    <main class="login-page">
 
-<h1>
-User Login
-</h1>
+        <section class="login-card">
 
+            <!-- Website branding -->
+            <div class="login-brand">
+                <div class="brand-logo">H</div>
 
+                <div>
+                    <h2 class="brand-name">Histogram</h2>
+                    <p class="brand-tagline">Stories from the past</p>
+                </div>
+            </div>
 
-<form action="/" method="POST">
+            <div class="login-heading">
+                <h1>User Login</h1>
 
+                <p>
+                    Enter your details to access your account.
+                </p>
+            </div>
 
-<label>
-Email:
-</label>
+            <!-- Change the action if your login route is different -->
+            <form action="/" method="POST" class="login-form">
 
+                <div class="form-group">
+                    <label for="email">Email address</label>
 
-<input
-type="email"
-name="email"
-required>
+                    <div class="input-container">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
 
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                </div>
 
-<br><br>
+                <div class="form-group">
+                    <label for="password">Password</label>
 
+                    <div class="input-container">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10h16V10a2 2 0 0 0-2-2zm-9-2a3 3 0 0 1 6 0v2H9V6zm4 9.73V18h-2v-2.27a2 2 0 1 1 2 0z"/>
+                        </svg>
 
-<label>
-Password:
-</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                </div>
 
+                <button type="submit" class="login-button">
+                    <span>Login</span>
 
-<input
-type="password"
-name="password"
-required>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m13 5-1.4 1.4 4.6 4.6H4v2h12.2l-4.6 4.6L13 19l7-7-7-7z"/>
+                    </svg>
+                </button>
 
+            </form>
 
-<br><br>
+            <div class="register-section">
+                <span>Do not have an account?</span>
 
+                <a href="/register">Register Account</a>
+            </div>
 
-<button>
-Login
-</button>
+        </section>
 
+        <p class="login-footer">
+            Explore history. Share knowledge. Preserve stories.
+        </p>
 
-</form>
-<br>
-
-
-
-<a href="/register">
-Register Account
-</a>
-
+    </main>
 
 </body>
-
 
 </html>
