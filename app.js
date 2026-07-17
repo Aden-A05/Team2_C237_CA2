@@ -246,7 +246,7 @@ app.post('/addPost', upload.single('image'), (req, res) => {
 
 // Ka Fai Viewing and displaying information
 app.get('/home', checkAuthenticated, (req, res) => {
-    const sql = 'SELECT * FROM histogram_table'
+    const sql = ' SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id ORDER BY h.postId DESC '
     connection.query(sql, (error, results) => {
         if (error) {
             console.log('Error in viewing information', error)
@@ -307,9 +307,9 @@ app.post('/deletePost/:id',checkAuthenticated ,(req, res) => {
  
     });
 
-// Admin Home - view all posts - Done by Ka Fai
+// Admin Home - view all posts - Done by Ka Fai (Enhancement)
 app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
-    const sql = 'SELECT * FROM histogram_table ORDER BY postId DESC';
+    const sql = ' SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id ORDER BY h.postId DESC '
     connection.query(sql, (error, results) => {
         if (error) {
             console.log('Error in viewing information', error);
@@ -325,7 +325,7 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
     });
 });
 
-// Admin Analytics Dashboard - Done by Ka Fai
+// Admin Analytics Dashboard - Done by Ka Fai (Enhancement)
 app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
     const sqlPosts = 'SELECT COUNT(*) AS totalPosts FROM histogram_table';
     const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';

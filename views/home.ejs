@@ -66,6 +66,7 @@
               <h5 class="card-title"><%= histogram_table[hp].title %></h5>
               <p class="card-text"><strong>Category:</strong> <%= histogram_table[hp].categories %></p>
               <p class="card-text"><%= histogram_table[hp].caption %></p>
+              <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%= histogram_table[hp].posted_role %>)</em></p>
               <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
                 <button class="btn btn-danger">Delete</button>
               </form>
@@ -88,6 +89,7 @@
               <p class="card-text"><strong>Category:</strong> <%= histogram_table[hp].categories %></p>
               <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top" alt="<%= histogram_table[hp].title %>">
               <p class="card-text"><%= histogram_table[hp].caption %></p>
+              <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%= histogram_table[hp].posted_role %>)</em></p>
               <!-- Aden Delete part -->
               <%if(user.user_id === histogram_table[hp].user_id){%>
               <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
