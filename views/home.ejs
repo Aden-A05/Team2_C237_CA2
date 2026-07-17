@@ -1,106 +1,223 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>
-    <% if (user && user.role === 'admin') { %>
-      <%= activePage === 'adminDashboard' ? 'Admin Dashboard' : 'Admin Home' %>
-    <% } else { %>
-      Histogram
-    <% } %>
+    <% if (user && user.role==='admin' ) { %>
+      <%= activePage==='adminDashboard' ? 'Admin Dashboard' : 'Admin Home' %>
+        <% } else { %>
+          Histogram
+          <% } %>
   </title>
   <link rel="stylesheet" href="/css/navbar.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body class="container mt-4">
   <%- include('partials/navbar') %>
 
-  <% if (errorMessage && errorMessage.length > 0) { %>
-    <div class="alert alert-danger">
-      <%= errorMessage[0] %>
-    </div>
-  <% } %>
-
-  <!-- Admin Dashboard -->
-  <% if (user && user.role === 'admin' && activePage === 'adminDashboard') { %>
-    <h2 class="mb-4">Admin Analytics Dashboard</h2>
-    <div class="row mb-4">
-      <div class="col-md-6">
-        <div class="card p-3 shadow-sm">
-          <h4>Total Posts: <%= totalPosts %></h4>
-          <h4>Total Users: <%= totalUsers %></h4>
-        </div>
+    <% if (errorMessage && errorMessage.length> 0) { %>
+      <div class="alert alert-danger">
+        <%= errorMessage[0] %>
       </div>
-      <div class="col-md-6">
-        <canvas id="categoryChart"></canvas>
-      </div>
-    </div>
+      <% } %>
 
-    <script>
-      const ctx = document.getElementById('categoryChart').getContext('2d');
-      const categoryChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: <%- JSON.stringify(categoriesData.map(c => c.categories)) %>,
-          datasets: [{
-            label: 'Posts per Category',
-            data: <%- JSON.stringify(categoriesData.map(c => c.count)) %>,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)'
-          }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-      });
-    </script>
-  <% } %>
-
-  <!-- Admin Home -->
-  <% if (user && user.role === 'admin' && activePage === 'adminHome') { %>
-    <h2>All User Posts (Admin View)</h2>
-    <div class="row">
-      <% for(let hp = 0; hp < histogram_table.length; hp ++) { %>
-        <div class="col-md-4 mb-4">
-          <div class="card shadow-sm">
-            <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top" alt="<%= histogram_table[hp].title %>">
-            <div class="card-body">
-              <h5 class="card-title"><%= histogram_table[hp].title %></h5>
-              <p class="card-text"><strong>Category:</strong> <%= histogram_table[hp].categories %></p>
-              <p class="card-text"><%= histogram_table[hp].caption %></p>
-              <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%= histogram_table[hp].posted_role %>)</em></p>
-              <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
-                <button class="btn btn-danger">Delete</button>
-              </form>
+        <!-- Admin Dashboard -->
+        <% if (user && user.role==='admin' && activePage==='adminDashboard' ) { %>
+          <h2 class="mb-4">Admin Analytics Dashboard</h2>
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="card p-3 shadow-sm">
+                <h4>Total Posts: <%= totalPosts %>
+                </h4>
+                <h4>Total Users: <%= totalUsers %>
+                </h4>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <canvas id="categoryChart"></canvas>
             </div>
           </div>
-        </div>
-      <% } %>
-    </div>
-  <% } %>
 
-  <!-- Normal User Home -->
-  <% if (!user || user.role !== 'admin') { %>
-    <h2>Histogram Entries</h2>
-    <div class="row">
-      <% for(let hp = 0; hp < histogram_table.length; hp ++) { %>
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><%= histogram_table[hp].title %></h5>
-              <p class="card-text"><strong>Category:</strong> <%= histogram_table[hp].categories %></p>
-              <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top" alt="<%= histogram_table[hp].title %>">
-              <p class="card-text"><%= histogram_table[hp].caption %></p>
-              <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%= histogram_table[hp].posted_role %>)</em></p>
-              <!-- Aden Delete part -->
-              <%if(user.user_id === histogram_table[hp].user_id){%>
-              <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
-                <button class="btn btn-danger">Delete</button>
-              </form>
-              <%}%>
-            </div>
-          </div>
-        </div>
-      <% } %>
-    </div>
-  <% } %>
+          <script>
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            const categoryChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: <% - JSON.stringify(categoriesData.map(c => c.categories)) %>,
+                datasets: [{
+                  label: 'Posts per Category',
+                  data: <% - JSON.stringify(categoriesData.map(c => c.count)) %>,
+                  backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+              },
+              options: { scales: { y: { beginAtZero: true } } }
+            });
+          </script>
+          <% } %>
+
+            <!-- Admin Home -->
+            <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
+              <h2>All User Posts (Admin View)</h2>
+              <div class="row">
+                <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                  <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                      <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
+                        alt="<%= histogram_table[hp].title %>">
+                      <div class="card-body">
+                        <h5 class="card-title">
+                          <%= histogram_table[hp].title %>
+                        </h5>
+                        <p class="card-text"><strong>Category:</strong>
+                          <%= histogram_table[hp].categories %>
+                        </p>
+                        <p class="card-text">
+                          <%= histogram_table[hp].caption %>
+                        </p>
+                        <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%=
+                                histogram_table[hp].posted_role %>)</em></p>
+                        <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
+                          <button class="btn btn-danger">Delete</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+              </div>
+              <% } %>
+
+                <!-- Normal User Home -->
+                <% if (!user || user.role !=='admin' ) { %>
+                  <h2>Histogram Entries</h2>
+
+
+                  <!--Danish's Search bar-->
+                  <form id="search-form" method="GET" action="/searched">
+                    <label>Search By:</label>
+                    <!-- 1. Radio Button Toggles -->
+                    <div class="search-type-selectors">
+                      <label>
+                        <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"> Search by
+                        Title
+                      </label>
+                      <label>
+                        <input type="radio" name="searchType" value="category" onclick="categorySearch()"> Search by
+                        Category
+                      </label>
+                      <label>
+                        <input type="radio" name="searchType" value="user" onclick="userSearch()"> Search by User
+                      </label>
+                    </div>
+
+                    <!-- 2. The Dynamic Input Fields -->
+                    <div class="search-fields">
+                      <!-- Title Input (visible and active by default) -->
+                      <div id="title-field" class="field-container">
+                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1">
+                      </div>
+
+                      <!-- Category Dropdown (hidden and disabled by default) -->
+                      <div id="category-field" class="field-container" hidden>
+                        <select name="categoryQuery" id="q2" disabled>
+                          <option value="">-- Select a category --</option>
+                          <option value="Military">Military</option>
+                          <option value="Culture">Culture</option>
+                          <option value="Politics">Politics</option>
+                          <option value="Archaeology">Archaeology</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+
+                      <!-- User input (hidden and disabled by default) -->
+                      <div id="user-field" class="field-container" hidden>
+                        <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled>
+                      </div>
+                    </div>
+
+                    <button type="submit">Search</button>
+                  </form>
+
+
+                  <div class="row">
+                    <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                      <div class="col-md-4 mb-4">
+                        <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">
+                              <%= histogram_table[hp].title %>
+                            </h5>
+                            <p class="card-text"><strong>Category:</strong>
+                              <%= histogram_table[hp].categories %>
+                            </p>
+                            <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
+                              alt="<%= histogram_table[hp].title %>">
+                            <p class="card-text">
+                              <%= histogram_table[hp].caption %>
+                            </p>
+                            <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%=
+                                    histogram_table[hp].posted_role %>)</em></p>
+                            <!-- Aden Delete part -->
+                            <%if(user.user_id===histogram_table[hp].user_id){%>
+                              <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
+                                <button class="btn btn-danger">Delete</button>
+                              </form>
+                              <%}%>
+                          </div>
+                        </div>
+                      </div>
+                      <% } %>
+                  </div>
+                  <% } %>
 </body>
+
+<script>
+  // Danish's search bar
+  const titleField = document.getElementById('title-field');
+  const categoryField = document.getElementById('category-field');
+  const userField = document.getElementById('user-field');
+
+  const titleInput = document.getElementById('q1');
+  const categorySelect = document.getElementById('q2');
+  const userInput = document.getElementById('q3');
+
+  function titleSearch() {
+    // Show title field, hide category and user field
+    titleField.removeAttribute('hidden');
+    categoryField.setAttribute('hidden', true);
+    userField.setAttribute('hidden', true);
+
+    // Enable title input, disable category and user
+    titleInput.removeAttribute('disabled');
+    categorySelect.setAttribute('disabled', true);
+    userInput.setAttribute('disabled', true);
+  }
+
+  function categorySearch() {
+    // Show category field, hide title and user field
+    categoryField.removeAttribute('hidden');
+    titleField.setAttribute('hidden', true);
+    userField.setAttribute('hidden', true);
+
+    // Enable category dropdown, disable title and user
+    categorySelect.removeAttribute('disabled');
+    titleInput.setAttribute('disabled', true);
+    userInput.setAttribute('disabled', true);
+  }
+
+  function userSearch() {
+    // Show user field, hide title and category field
+    userField.removeAttribute('hidden');
+    titleField.setAttribute('hidden', true);
+    categoryField.setAttribute('hidden', true);
+
+    // Enable user field, disable title and category
+    userInput.removeAttribute('disabled');
+    titleInput.setAttribute('disabled', true);
+    categorySelect.setAttribute('disabled', true);
+  }
+</script>
+
 </html>

@@ -6,26 +6,26 @@ const session = require('express-session')
 const flash = require('connect-flash')
 
 app.use(session({
-    secret:'secret',
-    resave: false, 
-    saveUninitialized:true,
-    cookie: {maxAge:1000*60*60*24*7}
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }
 }));
 
 const PORT = 3000;
 
 //Multer setup for file uploads : 
 const storage = multer.diskStorage({
-    destination: (req, file ,cb)=>{
+    destination: (req, file, cb) => {
         cb(null, 'public/images');
 
     },
-    filename: (req,file,cb)=>{
+    filename: (req, file, cb) => {
         cb(null, file.originalname)
     }
 });
 
-const upload = multer({storage:storage})
+const upload = multer({ storage: storage })
 
 
 
@@ -41,7 +41,7 @@ const connection = mysql.createConnection({
 });
 
 app.use(flash())
- 
+
 connection.connect((err) => {
     if (err) {
         console.error('Error connecting to MySQL:', err);
@@ -62,11 +62,11 @@ app.use(express.urlencoded({
 }))
 
 //Custom middleware to check user authentication
-const checkAuthenticated = (req,res,next)=>{
-    if(req.session.user){
+const checkAuthenticated = (req, res, next) => {
+    if (req.session.user) {
         return next()
-    }else{
-        req.flash('error','Please log in to view this resource');
+    } else {
+        req.flash('error', 'Please log in to view this resource');
         res.redirect('/login')
     }
 }
@@ -74,7 +74,7 @@ const checkAuthenticated = (req,res,next)=>{
 //Routes 
 // Registering Account - Raj
 // Log in - Raj
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
 
     res.render('login');
 
@@ -112,7 +112,7 @@ app.post('/', (req, res) => {
         }
     });
 });
-app.get('/register',(req,res)=>{
+app.get('/register', (req, res) => {
 
     res.render('register');
 
@@ -120,7 +120,7 @@ app.get('/register',(req,res)=>{
 
 
 
-app.post('/register',(req,res)=>{
+app.post('/register', (req, res) => {
 
 
     const {
@@ -152,10 +152,10 @@ app.post('/register',(req,res)=>{
     connection.query(
         sql,
         values,
-        (error,result)=>{
+        (error, result) => {
 
 
-            if(error){
+            if (error) {
 
                 console.log(
                     "Registration Error:",
@@ -185,7 +185,7 @@ app.post('/register',(req,res)=>{
 
 // Log out - Raj
 
-app.get('/logout',(req,res)=>{
+app.get('/logout', (req, res) => {
 
     req.session.destroy();
 
@@ -210,7 +210,7 @@ const checkAdmin = (req, res, next) => {
 
 // Dayn task: Adding new information
 app.get('/addPost', (req, res) => {
-    res.render('add', { 
+    res.render('add', {
         activePage: 'addPost',
         user: req.session.user,
         errorMessage: req.flash('error')
@@ -252,13 +252,14 @@ app.get('/home', checkAuthenticated, (req, res) => {
             console.log('Error in viewing information', error)
             res.send('Error retrieving data')
         } else {
-            res.render('home', { 
-                histogram_table : results, 
-                activePage: 'home', 
-                user: req.session.user, 
-                errorMessage: req.flash('error')})
-        } 
-        
+            res.render('home', {
+                histogram_table: results,
+                activePage: 'home',
+                user: req.session.user,
+                errorMessage: req.flash('error')
+            })
+        }
+
     })
 })
 
@@ -450,49 +451,50 @@ app.post(
     }
 );
 //Aden Delete post task 
-app.post('/deletePost/:id',checkAuthenticated ,(req, res) => {
+app.post('/deletePost/:id', checkAuthenticated, (req, res) => {
     const postid = req.params.id
     const user_role = req.session.user.role
     const user_id = req.session.user.user_id
-    
+
     //SQL statment to delete the post : 
     const sql_2 = 'DELETE FROM histogram_table WHERE postId = ?'
 
     //SQL statement to extract the post 
     const sql_1 = 'SELECT * FROM histogram_table WHERE postId = ?'
-    connection.query(sql_1,[postid], (error, results) => {
-    if (error){
-        console.log('Error in trying to delete the post:', error)
-        return res.redirect('/home')
-        }else{
-        // check if the post exsits 
-        if(results.length === 0){
-            req.flash('error','Post not found')
-            return res.redirect('/home')        
-        }
-        const extracted_post = results[0]
-
-        //Variable that stores the result if the user is admin
-        const is_admin = user_role === 'admin'
-        //variable that store the result if the user is the owner of the post
-        const is_owner = user_id === extracted_post.user_id
-
-         if(is_admin === true || is_owner === true ){
-         connection.query(sql_2,[postid], (error, results) => {
-            if (error){
-                console.log('Error in trying to delete the post:', error)
+    connection.query(sql_1, [postid], (error, results) => {
+        if (error) {
+            console.log('Error in trying to delete the post:', error)
+            return res.redirect('/home')
+        } else {
+            // check if the post exsits 
+            if (results.length === 0) {
+                req.flash('error', 'Post not found')
                 return res.redirect('/home')
-                }else{return res.redirect('/admin/home')} // Redirect user back to home page when the delete operation is successfull
-            });
-        }else{ //If the user is not the owner of the post and not the admin 
-        req.flash('error','You dont have the permission to delete other people post.');
-            return res.redirect('/home') }
+            }
+            const extracted_post = results[0]
+
+            //Variable that stores the result if the user is admin
+            const is_admin = user_role === 'admin'
+            //variable that store the result if the user is the owner of the post
+            const is_owner = user_id === extracted_post.user_id
+
+            if (is_admin === true || is_owner === true) {
+                connection.query(sql_2, [postid], (error, results) => {
+                    if (error) {
+                        console.log('Error in trying to delete the post:', error)
+                        return res.redirect('/home')
+                    } else { return res.redirect('/admin/home') } // Redirect user back to home page when the delete operation is successfull
+                });
+            } else { //If the user is not the owner of the post and not the admin 
+                req.flash('error', 'You dont have the permission to delete other people post.');
+                return res.redirect('/home')
+            }
 
         };
     });
 
- 
-    });
+
+});
 
 // Admin Home - view all posts - Done by Ka Fai (Enhancement)
 app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
@@ -548,5 +550,70 @@ app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
         });
     });
 });
+
+// Danish's search function
+app.get('/searched', checkAuthenticated, (req, res) => {
+    // Read the type of search (title/category/user)
+    const searchType = req.query.searchType;
+
+
+    if (searchType === 'title') {
+        const titleQuery = req.query.titleQuery;
+        const sql = 'SELECT * from histogram_table WHERE title like ?';
+
+        connection.query(sql, [`${titleQuery}%`], (error, results) => {
+            if (error) {
+                console.error("Error searching posts:", error);
+                return res.status(500).send('Error searching posts');
+            }
+            res.render('searched', {
+                histogram_table: results, 
+                activePage: 'home',
+                user: req.session.user,
+                errorMessage: req.flash('error')
+            });
+        });
+
+
+    } else if (searchType === 'category') {
+        const categoryQuery = req.query.categoryQuery;
+        const sql = 'SELECT * from histogram_table WHERE categories like ?';
+
+        connection.query(sql, [`${categoryQuery}%`], (error, results) => {
+            if (error) {
+                console.error("Error searching posts:", error);
+                return res.status(500).send('Error searching posts');
+            }
+            res.render('searched', {
+                histogram_table: results, 
+                activePage: 'home',
+                user: req.session.user,
+                errorMessage: req.flash('error')
+            });
+        });
+
+
+    } else if (searchType === 'user') {
+        const userQuery = req.query.userQuery;
+        const sql = 'SELECT postID, title, categories, image, caption from histogram_table INNER JOIN user_credentials on histogram_table.user_id = user_credentials.user_id WHERE name like ?';
+
+        connection.query(sql, [`${userQuery}%`], (error, results) => {
+            if (error) {
+                console.error("Error searching posts:", error);
+                return res.status(500).send('Error searching posts');
+            }
+            res.render('searched', {
+                histogram_table: results, 
+                activePage: 'home',
+                user: req.session.user,
+                errorMessage: req.flash('error')
+            });
+        });
+    } else {
+        // In case no conditions met
+        res.status(400).send('Invalid search type specified');
+    }
+});
+
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
