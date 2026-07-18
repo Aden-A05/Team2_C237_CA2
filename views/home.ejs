@@ -46,10 +46,10 @@
             const categoryChart = new Chart(ctx, {
               type: 'bar',
               data: {
-                labels: <% - JSON.stringify(categoriesData.map(c => c.categories)) %>,
+                labels: <%- JSON.stringify(categoriesData.map(c => c.categories)) %>,
                 datasets: [{
                   label: 'Posts per Category',
-                  data: <% - JSON.stringify(categoriesData.map(c => c.count)) %>,
+                  data: <%- JSON.stringify(categoriesData.map(c => c.count)) %>,
                   backgroundColor: 'rgba(54, 162, 235, 0.6)'
                 }]
               },
