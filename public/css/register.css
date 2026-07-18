@@ -27,7 +27,17 @@ body {
             #ebe4d7
         );
 }
-
+.error-message {
+    background: #ffe5e5;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
 .register-page {
     position: relative;
 

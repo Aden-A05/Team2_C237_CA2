@@ -72,7 +72,6 @@ const checkAuthenticated = (req, res, next) => {
 }
 
 //Routes 
-// Registering Account - Raj
 // Log in - Raj
 app.get('/', (req, res) => {
 
@@ -112,6 +111,7 @@ app.post('/', (req, res) => {
         }
     });
 });
+
 app.get('/register', (req, res) => {
 
     res.render('register');
@@ -119,9 +119,8 @@ app.get('/register', (req, res) => {
 });
 
 
-
+// Registering - Raj
 app.post('/register', (req, res) => {
-
 
     const {
         name,
@@ -131,13 +130,11 @@ app.post('/register', (req, res) => {
     } = req.body;
 
 
-
     const sql = `
     INSERT INTO user_credentials
     (name, email, password, role)
     VALUES (?, ?, SHA1(?), ?)
     `;
-
 
 
     const values = [
@@ -146,7 +143,6 @@ app.post('/register', (req, res) => {
         password,
         role
     ];
-
 
 
     connection.query(
@@ -162,7 +158,21 @@ app.post('/register', (req, res) => {
                     error
                 );
 
-                return res.redirect('/register');
+
+                // Duplicate email
+                if (error.code === 'ER_DUP_ENTRY') {
+
+                    return res.render('register', {
+                        error: 'Email already exists. Please use another email.'
+                    });
+
+                }
+
+
+                // Other errors
+                return res.render('register', {
+                    error: 'Registration failed. Please try again.'
+                });
 
             }
 
@@ -176,10 +186,8 @@ app.post('/register', (req, res) => {
 
             res.redirect('/');
 
-
         }
     );
-
 
 });
 

@@ -3,14 +3,25 @@
 
     <a href="/" class="navbar-brand">
       <div class="brand-logo">H</div>
+
       <div class="brand-details">
         <span class="brand-name">Histogram</span>
-        <span class="brand-tagline">Team 2 CA2 | Stories from the past</span>
+        <span class="brand-tagline">
+          Team 2 CA2 | Stories from the past
+        </span>
       </div>
     </a>
 
-    <input type="checkbox" id="navbar-toggle" class="navbar-toggle">
-    <label for="navbar-toggle" class="navbar-menu-button">
+    <input
+      type="checkbox"
+      id="navbar-toggle"
+      class="navbar-toggle"
+    >
+
+    <label
+      for="navbar-toggle"
+      class="navbar-menu-button"
+    >
       <span></span>
       <span></span>
       <span></span>
@@ -18,46 +29,68 @@
 
     <div class="navbar-links">
 
-      <!-- Normal user links -->
-      <a href="/home" class="navbar-link <%= activePage === 'home' ? 'active' : '' %>">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3V10.8z"/>
-        </svg>
-        <span>Home</span>
-      </a>
-
-      <a href="/addPost" class="navbar-link <%= activePage === 'addPost' ? 'active' : '' %>">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z"/>
-        </svg>
-        <span>Add Post</span>
-      </a>
-    <a href="/logout" class="navbar-link logout-link">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-       <path d="M10 17v-2h4V9h-4V7h6v10h-6zm-1-3 1.4-1.4L8.8 11H3V9h5.8l1.6-1.6L9 6l-4 4 4 4z"/>
-     </svg>
-
-  <span>Log Out</span>
-</a>
-
-      <!-- Admin-only links -->
       <% if (user && user.role === 'admin') { %>
-        <% if (activePage === 'adminDashboard') { %>
-          <a href="/admin/home" class="navbar-link <%= activePage === 'adminHome' ? 'active' : '' %>">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3V10.8z"/>
-            </svg>
-            <span>Admin Home</span>
-          </a>
-        <% } else { %>
-          <a href="/admin/dashboard" class="navbar-link <%= activePage === 'adminDashboard' ? 'active' : '' %>">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 13h2v-2H3v2zm4 0h2v-2H7v2zm4 0h2v-2h-2v2zm4 0h2v-2h-2v2zm4 0h2v-2h-2v2z"/>
-            </svg>
-            <span>Dashboard</span>
-          </a>
-        <% } %>
+
+        <!-- Admin Home -->
+        <a
+          href="/admin/home"
+          class="navbar-link <%= activePage === 'adminHome' ? 'active' : '' %>"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3V10.8z"/>
+          </svg>
+
+          <span>Admin Home</span>
+        </a>
+
+        <!-- Admin Dashboard -->
+        <a
+          href="/admin/dashboard"
+          class="navbar-link <%= activePage === 'adminDashboard' ? 'active' : '' %>"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 13h2v-2H3v2zm4 0h2v-2H7v2zm4 0h2v-2h-2v2zm4 0h2v-2h-2v2zm4 0h2v-2h-2v2z"/>
+          </svg>
+
+          <span>Dashboard</span>
+        </a>
+
+      <% } else { %>
+
+        <!-- Normal User Home -->
+        <a
+          href="/home"
+          class="navbar-link <%= activePage === 'home' ? 'active' : '' %>"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3V10.8z"/>
+          </svg>
+
+          <span>Home</span>
+        </a>
+
+        <!-- Normal User Add Post -->
+        <a
+          href="/addPost"
+          class="navbar-link <%= activePage === 'addPost' ? 'active' : '' %>"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z"/>
+          </svg>
+
+          <span>Add Post</span>
+        </a>
+
       <% } %>
+
+      <!-- Log Out shown to both users and admins -->
+      <a href="/logout" class="navbar-link logout-link">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 17v-2h4V9h-4V7h6v10h-6zm-1-3 1.4-1.4L8.8 11H3V9h5.8l1.6-1.6L9 6l-4 4 4 4z"/>
+        </svg>
+
+        <span>Log Out</span>
+      </a>
 
     </div>
   </div>
