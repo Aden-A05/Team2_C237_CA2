@@ -564,28 +564,28 @@ app.get('/searched', checkAuthenticated, (req, res) => {
     // Read the type of search (title/category/user)
     const searchType = req.query.searchType;
 
-
     if (searchType === 'title') {
         const titleQuery = req.query.titleQuery;
-        const sql = 'SELECT * from histogram_table WHERE title like ?';
-
+        const sql = 'SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id WHERE h.title like ? ORDER BY h.postId DESC ';
         connection.query(sql, [`${titleQuery}%`], (error, results) => {
             if (error) {
                 console.error("Error searching posts:", error);
                 return res.status(500).send('Error searching posts');
             }
             res.render('searched', {
-                histogram_table: results, 
+                histogram_table: results,
                 activePage: 'home',
                 user: req.session.user,
-                errorMessage: req.flash('error')
+                errorMessage: req.flash('error'),
+                searchType: searchType,
+                titleQuery: titleQuery
             });
         });
 
 
     } else if (searchType === 'category') {
         const categoryQuery = req.query.categoryQuery;
-        const sql = 'SELECT * from histogram_table WHERE categories like ?';
+        const sql = 'SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id WHERE h.categories like ? ORDER BY h.postId DESC';
 
         connection.query(sql, [`${categoryQuery}%`], (error, results) => {
             if (error) {
@@ -593,17 +593,19 @@ app.get('/searched', checkAuthenticated, (req, res) => {
                 return res.status(500).send('Error searching posts');
             }
             res.render('searched', {
-                histogram_table: results, 
+                histogram_table: results,
                 activePage: 'home',
                 user: req.session.user,
-                errorMessage: req.flash('error')
+                errorMessage: req.flash('error'),
+                searchType: searchType,
+                categoryQuery: categoryQuery
             });
         });
 
 
     } else if (searchType === 'user') {
         const userQuery = req.query.userQuery;
-        const sql = 'SELECT postID, title, categories, image, caption from histogram_table INNER JOIN user_credentials on histogram_table.user_id = user_credentials.user_id WHERE name like ?';
+        const sql = 'SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id WHERE u.name like ? ORDER BY h.postId DESC';
 
         connection.query(sql, [`${userQuery}%`], (error, results) => {
             if (error) {
@@ -611,10 +613,12 @@ app.get('/searched', checkAuthenticated, (req, res) => {
                 return res.status(500).send('Error searching posts');
             }
             res.render('searched', {
-                histogram_table: results, 
+                histogram_table: results,
                 activePage: 'home',
                 user: req.session.user,
-                errorMessage: req.flash('error')
+                errorMessage: req.flash('error'),
+                searchType: searchType,
+                userQuery: userQuery
             });
         });
     } else {

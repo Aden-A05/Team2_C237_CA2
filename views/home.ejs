@@ -116,12 +116,12 @@
                     <div class="search-fields">
                       <!-- Title Input (visible and active by default) -->
                       <div id="title-field" class="field-container">
-                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1">
+                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required>
                       </div>
 
                       <!-- Category Dropdown (hidden and disabled by default) -->
                       <div id="category-field" class="field-container" hidden>
-                        <select name="categoryQuery" id="q2" disabled>
+                        <select name="categoryQuery" id="q2" disabled required>
                           <option value="">-- Select a category --</option>
                           <option value="Military">Military</option>
                           <option value="Culture">Culture</option>
@@ -133,11 +133,12 @@
 
                       <!-- User input (hidden and disabled by default) -->
                       <div id="user-field" class="field-container" hidden>
-                        <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled>
+                        <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled
+                          required>
                       </div>
                     </div>
 
-                    <button type="submit">Search</button>
+                    <button type="submit">Search</button> <br>
                   </form>
 
 
