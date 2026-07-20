@@ -23,6 +23,12 @@
         <%= errorMessage[0] %>
       </div>
       <% } %>
+    
+    <% if (approvedMessage && approvedMessage.length> 0) { %>
+      <div class="alert alert-success">
+        <%= approvedMessage[0] %>
+      </div>
+      <% } %>
 
         <!-- Admin Dashboard -->
         <% if (user && user.role==='admin' && activePage==='adminDashboard' ) { %>
@@ -40,6 +46,49 @@
               <canvas id="categoryChart"></canvas>
             </div>
           </div>
+
+          <!-- Aden Enhancement-->
+          <h2>Approval List :</h2>
+          
+          <div class="row">
+                    <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                      <%if(histogram_table[hp].is_approved===0){%>
+                      <div class="col-md-4 mb-4">
+                        <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">
+                              <%= histogram_table[hp].title %>
+                            </h5>
+                            <p class="card-text"><strong>Category:</strong>
+                              <%= histogram_table[hp].categories %>
+                            </p>
+                            <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
+                              alt="<%= histogram_table[hp].title %>">
+                            <p class="card-text">
+                              <%= histogram_table[hp].caption %>
+                            </p>
+                            <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%=
+                                    histogram_table[hp].posted_role %>)</em></p>
+
+                            <!-- Aden Delete part -->
+                              <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
+                                <button class="btn btn-danger">Delete</button>
+                              </form>
+                              
+                            <!--Aden Enchancement Approval button--> 
+                            <form action="/approvePost/<%= histogram_table[hp].postId %>" method="post">
+                                <button class="btn btn-primary">Approve</button>
+                              </form> 
+                            
+
+                            
+ 
+
+                            <%}%>
+                          </div>
+                        </div>
+                      </div>
+                      <%}%>
 
           <script>
             const ctx = document.getElementById('categoryChart').getContext('2d');
@@ -111,6 +160,7 @@
               
               <div class="row">
                 <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                  <%if(histogram_table[hp].is_approved===1){%>
                   <div class="col-md-4 mb-4">
                     <div class="card shadow-sm">
                       <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
@@ -133,6 +183,9 @@
                       </div>
                     </div>
                   </div>
+
+                  <% } %>
+
                   <% } %>
               </div>
               <% } %>
@@ -192,6 +245,7 @@
 
                   <div class="row">
                     <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                      <%if(histogram_table[hp].is_approved===1){%>
                       <div class="col-md-4 mb-4">
                         <div class="card">
                           <div class="card-body">
@@ -218,6 +272,7 @@
                         </div>
                       </div>
                       <% } %>
+                    <% } %>
                   </div>
                   <% } %>
 </body>

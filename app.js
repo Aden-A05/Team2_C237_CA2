@@ -264,7 +264,8 @@ app.get('/home', checkAuthenticated, (req, res) => {
                 histogram_table: results,
                 activePage: 'home',
                 user: req.session.user,
-                errorMessage: req.flash('error')
+                errorMessage: req.flash('error'),
+                approvedMessage: req.flash('approved','Post has been approved')
             })
         }
 
@@ -516,7 +517,8 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
                 activePage: 'adminHome',
                 histogram_table: results,
                 user: req.session.user,
-                errorMessage: req.flash('error')
+                errorMessage: req.flash('error'),
+                approvedMessage: req.flash('approved','Post has been approved')
             });
         }
     });
@@ -524,9 +526,11 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
 
 // Admin Analytics Dashboard - Done by Ka Fai (Enhancement)
 app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
-    const sqlPosts = 'SELECT COUNT(*) AS totalPosts FROM histogram_table';
     const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';
     const sqlCategories = 'SELECT categories, COUNT(*) AS count FROM histogram_table GROUP BY categories';
+
+    //SQL statement for admin post approval
+    const sqlPosts = ' SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id ORDER BY h.postId DESC '
 
     connection.query(sqlPosts, (err1, postsResult) => {
         if (err1) {
@@ -552,7 +556,9 @@ app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
                     totalUsers: usersResult[0].totalUsers,
                     categoriesData: categoriesResult,
                     user: req.session.user,
-                    errorMessage: req.flash('error')
+                    histogram_table: postsResult,
+                    errorMessage: req.flash('error'),
+                    approvedMessage: req.flash('approved','Post has been approved')
                 });
             });
         });
@@ -627,5 +633,21 @@ app.get('/searched', checkAuthenticated, (req, res) => {
     }
 });
 
+//Admin post approval enhancement - Done by Aden 
+app.post('/approvePost/:id', checkAdmin , (req,res)=>{
+    const postid = req.params.id
+    const sql = 'UPDATE histogram_table SET is_approved = ? WHERE postId = ?'
+
+    connection.query(sql , [1,postid] , (error,results)=>{
+        if(error){
+            console.log('Error approving the post' , error)
+        }
+        else{
+            approvedMessage: req.flash('approved','Post has been approved')
+            res.redirect('/admin/dashboard')
+            
+        }
+    })
+});
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
