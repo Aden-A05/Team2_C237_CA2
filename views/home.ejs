@@ -62,53 +62,58 @@
             <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
               <h2>All User Posts (Admin View)</h2>
 
-<!--Danish's Search bar-->
-                  <form id="search-form" method="GET" action="/searched">
-                    <label>Search By:</label>
-                    <!-- 1. Radio Button Toggles -->
-                    <div class="search-type-selectors">
-                      <label>
-                        <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"> Search by
-                        Title <br><br>
-                      </label>
-                      <label>
-                        <input type="radio" name="searchType" value="category" onclick="categorySearch()"> Search by
-                        Category <br><br>
-                      </label>
-                      <label>
-                        <input type="radio" name="searchType" value="user" onclick="userSearch()"> Search by User <br><br>
-                      </label>
-                    </div>
+              <!--Danish's Search bar-->
+              <form id="search-form" method="GET" action="/searched">
 
-                    <!-- 2. The Dynamic Input Fields -->
-                    <div class="search-fields">
-                      <!-- Title Input (visible and active by default) -->
-                      <div id="title-field" class="field-container">
-                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required> <br><br>
-                      </div>
+                <label style="font-weight:bold; font-size:16px; color:#333;">Search By:</label>
 
-                      <!-- Category Dropdown (hidden and disabled by default) -->
-                      <div id="category-field" class="field-container" hidden> 
-                        <select name="categoryQuery" id="q2" disabled required>
-                          <option value="">-- Select a category --</option>
-                          <option value="Military">Military</option>
-                          <option value="Culture">Culture</option>
-                          <option value="Politics">Politics</option>
-                          <option value="Archaeology">Archaeology</option>
-                          <option value="Other">Other</option>
-                        </select><br><br>
-                      </div>
+                <div class="search-type-selectors" style="margin:8px 0;">
+                  <label style="display:block; margin-bottom:6px; color:#444;">
+                    <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"
+                      style="margin-right:6px;"> Search by Title
+                  </label>
+                  <label style="display:block; margin-bottom:6px; color:#444;">
+                    <input type="radio" name="searchType" value="category" onclick="categorySearch()"
+                      style="margin-right:6px;"> Search by Category
+                  </label>
+                  <label style="display:block; margin-bottom:6px; color:#444;">
+                    <input type="radio" name="searchType" value="user" onclick="userSearch()" style="margin-right:6px;">
+                    Search by User
+                  </label>
+                </div>
 
-                      <!-- User input (hidden and disabled by default) -->
-                      <div id="user-field" class="field-container" hidden>
-                        <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled
-                          required> <br><br>
-                      </div>
-                    </div>
+                <div class="search-fields" style="margin-top:10px;">
+                  <div id="title-field" class="field-container">
+                    <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required
+                      style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px;">
+                  </div>
 
-                    <button type="submit">Search</button> <br> <br>
-                  </form>
-              
+                  <div id="category-field" class="field-container" hidden>
+                    <select name="categoryQuery" id="q2" disabled required
+                      style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
+                      <option value="">-- Select a category --</option>
+                      <option value="Military">Military</option>
+                      <option value="Culture">Culture</option>
+                      <option value="Politics">Politics</option>
+                      <option value="Archaeology">Archaeology</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div id="user-field" class="field-container" hidden>
+                    <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled required
+                      style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
+                  </div>
+                </div>
+
+                <button type="submit"
+                  style="margin-top:15px; padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer;">
+                  Search
+                </button><br>
+              </form>
+
+
+
               <div class="row">
                 <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
                   <div class="col-md-4 mb-4">
@@ -144,49 +149,54 @@
 
                   <!--Danish's Search bar-->
                   <form id="search-form" method="GET" action="/searched">
-                    <label>Search By:</label>
-                    <!-- 1. Radio Button Toggles -->
-                    <div class="search-type-selectors">
-                      <label>
-                        <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"> Search by
-                        Title <br><br>
+
+                    <label style="font-weight:bold; font-size:16px; color:#333;">Search By:</label>
+
+                    <div class="search-type-selectors" style="margin:8px 0;">
+                      <label style="display:block; margin-bottom:6px; color:#444;">
+                        <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"
+                          style="margin-right:6px;"> Search by Title
                       </label>
-                      <label>
-                        <input type="radio" name="searchType" value="category" onclick="categorySearch()"> Search by
-                        Category <br><br>
+                      <label style="display:block; margin-bottom:6px; color:#444;">
+                        <input type="radio" name="searchType" value="category" onclick="categorySearch()"
+                          style="margin-right:6px;"> Search by Category
                       </label>
-                      <label>
-                        <input type="radio" name="searchType" value="user" onclick="userSearch()"> Search by User <br><br>
+                      <label style="display:block; margin-bottom:6px; color:#444;">
+                        <input type="radio" name="searchType" value="user" onclick="userSearch()"
+                          style="margin-right:6px;">
+                        Search by User
                       </label>
                     </div>
 
-                    <!-- 2. The Dynamic Input Fields -->
-                    <div class="search-fields">
-                      <!-- Title Input (visible and active by default) -->
+                    <div class="search-fields" style="margin-top:10px;">
                       <div id="title-field" class="field-container">
-                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required> <br><br>
+                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required
+                          style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px;">
                       </div>
 
-                      <!-- Category Dropdown (hidden and disabled by default) -->
-                      <div id="category-field" class="field-container" hidden> 
-                        <select name="categoryQuery" id="q2" disabled required>
+                      <div id="category-field" class="field-container" hidden>
+                        <select name="categoryQuery" id="q2" disabled required
+                          style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
                           <option value="">-- Select a category --</option>
                           <option value="Military">Military</option>
                           <option value="Culture">Culture</option>
                           <option value="Politics">Politics</option>
                           <option value="Archaeology">Archaeology</option>
                           <option value="Other">Other</option>
-                        </select><br><br>
+                        </select>
                       </div>
 
-                      <!-- User input (hidden and disabled by default) -->
                       <div id="user-field" class="field-container" hidden>
                         <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled
-                          required> <br><br>
+                          required
+                          style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
                       </div>
                     </div>
 
-                    <button type="submit">Search</button> <br> <br>
+                    <button type="submit"
+                      style="margin-top:15px; padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer;">
+                      Search
+                    </button><br>
                   </form>
 
 
