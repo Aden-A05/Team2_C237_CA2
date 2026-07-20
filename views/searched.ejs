@@ -59,7 +59,7 @@
                     <% } %>
 
                         <!-- Admin Home -->
-                        <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
+                        <% if (user && user.role==='admin') { %>
                             <h2>Filtered By: <%= searchType %> like <%= searchType==='title' ? titleQuery :
                                         searchType==='category' ? categoryQuery : searchType==='user' ? userQuery : ''
                                         %>
