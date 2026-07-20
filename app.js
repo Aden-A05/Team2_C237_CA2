@@ -527,6 +527,7 @@ app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
     const sqlPosts = 'SELECT COUNT(*) AS totalPosts FROM histogram_table';
     const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';
     const sqlCategories = 'SELECT categories, COUNT(*) AS count FROM histogram_table GROUP BY categories';
+    const sqlUsersList = 'SELECT u.name, u.role, COUNT(h.postId) AS post_count FROM user_credentials u LEFT JOIN histogram_table h ON u.user_id = h.user_id GROUP BY u.user_id, u.name, u.role ORDER BY u.role DESC, u.name ASC '
 
     connection.query(sqlPosts, (err1, postsResult) => {
         if (err1) {
@@ -546,15 +547,23 @@ app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
                     return res.send('Error fetching categories data');
                 }
 
-                res.render('home', {
-                    activePage: 'adminDashboard',
-                    totalPosts: postsResult[0].totalPosts,
-                    totalUsers: usersResult[0].totalUsers,
-                    categoriesData: categoriesResult,
-                    user: req.session.user,
-                    errorMessage: req.flash('error')
+                connection.query(sqlUsersList, (err4, usersList) => {
+                    if (err4) {
+                        console.log('Error fetching user list:', err4);
+                        return res.send('Error fetching user list');
+                    }
+
+                    res.render('home', {
+                        activePage: 'adminDashboard',
+                        totalPosts: postsResult[0].totalPosts,
+                        totalUsers: usersResult[0].totalUsers,
+                        categoriesData: categoriesResult,
+                        userList: usersList,
+                        user: req.session.user,
+                        errorMessage: req.flash('error')
+                    })
                 });
-            });
+            });a
         });
     });
 });

@@ -25,38 +25,67 @@
       <% } %>
 
         <!-- Admin Dashboard -->
-        <% if (user && user.role==='admin' && activePage==='adminDashboard' ) { %>
-          <h2 class="mb-4">Admin Analytics Dashboard</h2>
-          <div class="row mb-4">
-            <div class="col-md-6">
-              <div class="card p-3 shadow-sm">
-                <h4>Total Posts: <%= totalPosts %>
-                </h4>
-                <h4>Total Users: <%= totalUsers %>
-                </h4>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <canvas id="categoryChart"></canvas>
-            </div>
-          </div>
+<% if (user && user.role==='admin' && activePage==='adminDashboard' ) { %>
+  <h2 class="mb-4">Admin Analytics Dashboard</h2>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card p-3 shadow-sm">
+        <h4>Total Posts: <%= totalPosts %></h4>
+        <h4>Total Users: <%= totalUsers %></h4>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <canvas id="categoryChart"></canvas>
+    </div>
+  </div>
 
-          <script>
-            const ctx = document.getElementById('categoryChart').getContext('2d');
-            const categoryChart = new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: <%- JSON.stringify(categoriesData.map(c => c.categories)) %>,
-                datasets: [{
-                  label: 'Posts per Category',
-                  data: <%- JSON.stringify(categoriesData.map(c => c.count)) %>,
-                  backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                }]
-              },
-              options: { scales: { y: { beginAtZero: true } } }
-            });
-          </script>
-          <% } %>
+  <script>
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const categoryChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: <%- JSON.stringify(categoriesData.map(c => c.categories)) %>,
+        datasets: [{
+          label: 'Posts per Category',
+          data: <%- JSON.stringify(categoriesData.map(c => c.count)) %>,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)'
+        }]
+      },
+      options: { scales: { y: { beginAtZero: true } } }
+    });
+  </script>
+
+  <!-- User Role List with Post Counts -->
+  <h3 class="mt-5">User List</h3>
+  <div class="row">
+    <div class="col-md-6">
+      <h4>Admins</h4>
+      <hr>
+      <ul class="list-group mb-4">
+        <% userList.filter(u => u.role === 'admin').forEach(admin => { %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <%= admin.name %>
+            <span class="badge bg-primary rounded-pill"><%= admin.post_count %> posts</span>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <div class="col-md-6">
+      <h4>Normal Users</h4>
+      <hr>
+      <ul class="list-group">
+        <% userList.filter(u => u.role !== 'admin').forEach(normal => { %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <%= normal.name %>
+            <span class="badge bg-secondary rounded-pill"><%= normal.post_count %> posts</span>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+<% } %>
+
 
             <!-- Admin Home -->
             <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
