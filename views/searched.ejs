@@ -60,13 +60,21 @@
 
                         <!-- Admin Home -->
                         <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
-                            <h2>All User Posts (Admin View)</h2>
+                            <h2>Filtered By: <%= searchType %> like <%= searchType==='title' ? titleQuery :
+                                        searchType==='category' ? categoryQuery : searchType==='user' ? userQuery : ''
+                                        %>
+                            </h2>
+
+                            <!-- Hardcoded back button-->
+                            <a id="back" href="/home">Back</a>
+                            <% if (histogram_table.length==0) { %>
+                                <p>No posts found.</p>
+                                <% } %>
+
                                     <div class="row">
                                         <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
                                             <div class="col-md-4 mb-4">
-                                                <div class="card shadow-sm">
-                                                    <img src="/images/<%= histogram_table[hp].image %>"
-                                                        class="card-img-top" alt="<%= histogram_table[hp].title %>">
+                                                <div class="card">
                                                     <div class="card-body">
                                                         <h5 class="card-title">
                                                             <%= histogram_table[hp].title %>
@@ -74,16 +82,22 @@
                                                         <p class="card-text"><strong>Category:</strong>
                                                             <%= histogram_table[hp].categories %>
                                                         </p>
+                                                        <img src="/images/<%= histogram_table[hp].image %>"
+                                                            class="card-img-top" alt="<%= histogram_table[hp].title %>">
                                                         <p class="card-text">
                                                             <%= histogram_table[hp].caption %>
                                                         </p>
                                                         <p class="card-text"><em>Posted by: <%=
-                                                                    histogram_table[hp].posted_by %>
-                                                                    (<%= histogram_table[hp].posted_role %>)</em></p>
-                                                        <form action="/deletePost/<%= histogram_table[hp].postId %>"
-                                                            method="post">
-                                                            <button class="btn btn-danger">Delete</button>
-                                                        </form>
+                                                                    histogram_table[hp].posted_by %> (
+                                                                    <%= histogram_table[hp].posted_role %>)</em>
+                                                        </p>
+                                                        <!-- Aden Delete part -->
+                                                        <%if(user.user_id===histogram_table[hp].user_id){%>
+                                                            <form action="/deletePost/<%= histogram_table[hp].postId %>"
+                                                                method="post">
+                                                                <button class="btn btn-danger">Delete</button>
+                                                            </form>
+                                                            <%}%>
                                                     </div>
                                                 </div>
                                             </div>

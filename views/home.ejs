@@ -61,6 +61,54 @@
             <!-- Admin Home -->
             <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
               <h2>All User Posts (Admin View)</h2>
+
+<!--Danish's Search bar-->
+                  <form id="search-form" method="GET" action="/searched">
+                    <label>Search By:</label>
+                    <!-- 1. Radio Button Toggles -->
+                    <div class="search-type-selectors">
+                      <label>
+                        <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"> Search by
+                        Title <br><br>
+                      </label>
+                      <label>
+                        <input type="radio" name="searchType" value="category" onclick="categorySearch()"> Search by
+                        Category <br><br>
+                      </label>
+                      <label>
+                        <input type="radio" name="searchType" value="user" onclick="userSearch()"> Search by User <br><br>
+                      </label>
+                    </div>
+
+                    <!-- 2. The Dynamic Input Fields -->
+                    <div class="search-fields">
+                      <!-- Title Input (visible and active by default) -->
+                      <div id="title-field" class="field-container">
+                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required> <br><br>
+                      </div>
+
+                      <!-- Category Dropdown (hidden and disabled by default) -->
+                      <div id="category-field" class="field-container" hidden> 
+                        <select name="categoryQuery" id="q2" disabled required>
+                          <option value="">-- Select a category --</option>
+                          <option value="Military">Military</option>
+                          <option value="Culture">Culture</option>
+                          <option value="Politics">Politics</option>
+                          <option value="Archaeology">Archaeology</option>
+                          <option value="Other">Other</option>
+                        </select><br><br>
+                      </div>
+
+                      <!-- User input (hidden and disabled by default) -->
+                      <div id="user-field" class="field-container" hidden>
+                        <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled
+                          required> <br><br>
+                      </div>
+                    </div>
+
+                    <button type="submit">Search</button> <br> <br>
+                  </form>
+              
               <div class="row">
                 <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
                   <div class="col-md-4 mb-4">
@@ -101,14 +149,14 @@
                     <div class="search-type-selectors">
                       <label>
                         <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"> Search by
-                        Title
+                        Title <br><br>
                       </label>
                       <label>
                         <input type="radio" name="searchType" value="category" onclick="categorySearch()"> Search by
-                        Category
+                        Category <br><br>
                       </label>
                       <label>
-                        <input type="radio" name="searchType" value="user" onclick="userSearch()"> Search by User
+                        <input type="radio" name="searchType" value="user" onclick="userSearch()"> Search by User <br><br>
                       </label>
                     </div>
 
@@ -116,11 +164,11 @@
                     <div class="search-fields">
                       <!-- Title Input (visible and active by default) -->
                       <div id="title-field" class="field-container">
-                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required>
+                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1" required> <br><br>
                       </div>
 
                       <!-- Category Dropdown (hidden and disabled by default) -->
-                      <div id="category-field" class="field-container" hidden>
+                      <div id="category-field" class="field-container" hidden> 
                         <select name="categoryQuery" id="q2" disabled required>
                           <option value="">-- Select a category --</option>
                           <option value="Military">Military</option>
@@ -128,17 +176,17 @@
                           <option value="Politics">Politics</option>
                           <option value="Archaeology">Archaeology</option>
                           <option value="Other">Other</option>
-                        </select>
+                        </select><br><br>
                       </div>
 
                       <!-- User input (hidden and disabled by default) -->
                       <div id="user-field" class="field-container" hidden>
                         <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3" disabled
-                          required>
+                          required> <br><br>
                       </div>
                     </div>
 
-                    <button type="submit">Search</button> <br>
+                    <button type="submit">Search</button> <br> <br>
                   </form>
 
 
