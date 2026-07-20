@@ -563,7 +563,7 @@ app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
                         errorMessage: req.flash('error')
                     })
                 });
-            });a
+            });
         });
     });
 });
