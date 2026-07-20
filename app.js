@@ -529,9 +529,6 @@ app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
     const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';
     const sqlCategories = 'SELECT categories, COUNT(*) AS count FROM histogram_table GROUP BY categories';
 
-    //SQL statement for admin post approval
-    const sqlPosts = ' SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id ORDER BY h.postId DESC '
-
     connection.query(sqlPosts, (err1, postsResult) => {
         if (err1) {
             console.log('Error fetching posts count:', err1);
@@ -550,15 +547,19 @@ app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
                     return res.send('Error fetching categories data');
                 }
 
+                connection.query(sqlUsersList, (err4, usersList) => {
+                    if (err4) {
+                        console.log('Error fetching user list:', err4);
+                        return res.send('Error fetching user list');
+                    }
+
                 res.render('home', {
                     activePage: 'adminDashboard',
                     totalPosts: postsResult[0].totalPosts,
                     totalUsers: usersResult[0].totalUsers,
                     categoriesData: categoriesResult,
                     user: req.session.user,
-                    histogram_table: postsResult,
-                    errorMessage: req.flash('error'),
-                    approvedMessage: req.flash('approved','Post has been approved')
+                    errorMessage: req.flash('error')
                 });
             });
         });
