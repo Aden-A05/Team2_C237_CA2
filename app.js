@@ -492,8 +492,14 @@ app.post('/deletePost/:id', checkAuthenticated, (req, res) => {
                 connection.query(sql_2, [postid], (error, results) => {
                     if (error) {
                         console.log('Error in trying to delete the post:', error)
-                        return res.redirect('/home')
-                    } else { return res.redirect('/home') } // Redirect user back to home page when the delete operation is successfull
+                        if(is_admin){
+                            return res.redirect('/admin/home')
+                        }else{return res.redirect('/home')}
+                    } else { // Redirect user back to home page when the delete operation is successfull
+                        if(is_admin){
+                            return res.redirect('/admin/home')
+                        }else{return res.redirect('/home')}
+                    } 
                 });
             } else { //If the user is not the owner of the post and not the admin 
                 req.flash('error', 'You dont have the permission to delete other people post.');
