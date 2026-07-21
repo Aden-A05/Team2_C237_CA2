@@ -526,45 +526,90 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
 
 // Admin Analytics Dashboard - Done by Ka Fai (Enhancement)
 app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
-    const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';
-    const sqlCategories = 'SELECT categories, COUNT(*) AS count FROM histogram_table GROUP BY categories';
+
+    const sqlPosts =
+        `SELECT h.*, 
+                u.name AS posted_by, 
+                u.role AS posted_role
+         FROM histogram_table h
+         INNER JOIN user_credentials u
+         ON h.user_id = u.user_id
+         ORDER BY h.postId DESC`;
+
+    const sqlUsers =
+        'SELECT COUNT(*) AS totalUsers FROM user_credentials';
+
+    const sqlCategories =
+        `SELECT categories, COUNT(*) AS count
+         FROM histogram_table
+         GROUP BY categories`;
+
+    const sqlUsersList =
+        `SELECT u.name,
+                u.role,
+                COUNT(h.postId) AS post_count
+         FROM user_credentials u
+         LEFT JOIN histogram_table h
+         ON u.user_id = h.user_id
+         GROUP BY u.user_id, u.name, u.role`;
 
     connection.query(sqlPosts, (err1, postsResult) => {
+
         if (err1) {
-            console.log('Error fetching posts count:', err1);
-            return res.send('Error fetching posts count');
+            console.log('Error fetching posts:', err1);
+            return res.send('Error fetching posts');
         }
 
         connection.query(sqlUsers, (err2, usersResult) => {
+
             if (err2) {
                 console.log('Error fetching users count:', err2);
                 return res.send('Error fetching users count');
             }
 
             connection.query(sqlCategories, (err3, categoriesResult) => {
+
                 if (err3) {
                     console.log('Error fetching categories data:', err3);
                     return res.send('Error fetching categories data');
                 }
 
                 connection.query(sqlUsersList, (err4, usersList) => {
+
                     if (err4) {
                         console.log('Error fetching user list:', err4);
                         return res.send('Error fetching user list');
                     }
 
-                res.render('home', {
-                    activePage: 'adminDashboard',
-                    totalPosts: postsResult[0].totalPosts,
-                    totalUsers: usersResult[0].totalUsers,
-                    categoriesData: categoriesResult,
-                    user: req.session.user,
-                    errorMessage: req.flash('error')
-                });
-            });
-        });
-    });
-});
+                    res.render('home', {
+                        activePage: 'adminDashboard',
+
+                        totalPosts: postsResult.length,
+
+                        totalUsers: usersResult[0].totalUsers,
+
+                        categoriesData: categoriesResult,
+
+                        userList: usersList,
+
+                        histogram_table: postsResult,
+
+                        user: req.session.user,
+
+                        errorMessage: req.flash('error'),
+
+                        approvedMessage: req.flash('approved')
+                    });
+
+                }); // closes sqlUsersList query
+
+            }); // closes sqlCategories query
+
+        }); // closes sqlUsers query
+
+    }); // closes sqlPosts query
+
+}); // closes /admin/dashboard route
 
 // Danish's search function
 app.get('/searched', checkAuthenticated, (req, res) => {
