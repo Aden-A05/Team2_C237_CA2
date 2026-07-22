@@ -28,291 +28,312 @@
           <div class="alert alert-success">
             <%= approvedMessage[0] %>
           </div>
-          <% } %>
+          <% if (approvedMessage && approvedMessage.length> 0) { %>
+            <div class="alert alert-success" id="flashMessage" style="transition: opacity 0.6s ease;">
+              <%= approvedMessage[0] %>
+            </div>
 
-            <!-- Admin Dashboard -->
-            <% if (user && user.role==='admin' && activePage==='adminDashboard' ) { %>
-              <h2 class="mb-4">Admin Analytics Dashboard</h2>
-
-              <div class="card p-4 shadow-sm mb-4">
-                <div class="row">
-                  <div class="col-md-6">
-                    <h4>Total Posts: <%= totalPosts %>
-                    </h4>
-                    <h4>Total Users: <%= totalUsers %>
-                    </h4>
-                  </div>
-                  <div class="col-md-6">
-                    <canvas id="categoryChart"></canvas>
-                  </div>
-                </div>
-              </div>
+            <script>
+              document.addEventListener('DOMContentLoaded', () => {
+                const flash = document.getElementById('flashMessage');
+                if (flash) {
+                  setTimeout(() => {
+                    flash.style.opacity = '0';   // fade out
+                    setTimeout(() => flash.remove(), 600); // remove after fade
+                  }, 5000); // wait 5 seconds
+                }
+              });
+            </script>
+            <% } %>
 
 
+              <% } %>
 
 
-                <!-- Aden Enhancement-->
-                <h2>Approval List :</h2>
+                <!-- Admin Dashboard -->
+                <% if (user && user.role==='admin' && activePage==='adminDashboard' ) { %>
+                  <h2 class="mb-4">Admin Analytics Dashboard</h2>
 
-                <div class="row">
-                  <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
-                    <%if(histogram_table[hp].is_approved===0){%>
-                      <div class="col-md-4 mb-4">
-                        <div class="card">
-                          <div class="card-body">
-                            <h5 class="card-title">
-                              <%= histogram_table[hp].title %>
-                            </h5>
-                            <p class="card-text"><strong>Category:</strong>
-                              <%= histogram_table[hp].categories %>
-                            </p>
-                            <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
-                              alt="<%= histogram_table[hp].title %>">
-                            <p class="card-text">
-                              <%= histogram_table[hp].caption %>
-                            </p>
-                            <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%=
-                                    histogram_table[hp].posted_role %>)</em></p>
-
-                            <!-- Aden Delete part -->
-                            <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
-                              <button class="btn btn-danger">Delete</button>
-                            </form>
-                            <br>
-                            <!--Aden Enchancement Approval button-->
-                            <form action="/approvePost/<%= histogram_table[hp].postId %>" method="post">
-                              <button class="btn btn-primary">Approve</button>
-                            </form>
-
-
-
-
-
-                            <%}%>
-                          </div>
-                        </div>
+                  <div class="card p-4 shadow-sm mb-4">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <h4>Total Approved Posts: <%= totalPosts %>
+                        </h4>
+                        <h4>Posts Waiting for Approval: <%= pendingPosts %>
+                        </h4>
+                        <h4>Total Users: <%= totalUsers %>
+                        </h4>
                       </div>
-                      <%}%>
+                      <div class="col-md-6">
+                        <canvas id="categoryChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
 
 
-                        <!-- User Role List with Post Counts -->
-                        <h3 class="mt-5">User List</h3>
-                        <div class="row">
-                          <div class="col-md-6">
-                            <h4>Admins</h4>
-                            <hr>
-                            <ul class="list-group mb-4">
-                              <% userList.filter(u=> u.role === 'admin').forEach(admin => { %>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                  <%= admin.name %>
-                                    <span class="badge bg-primary rounded-pill">
-                                      <%= admin.post_count %> posts
-                                    </span>
-                                </li>
-                                <% }) %>
-                            </ul>
-                          </div>
 
-                          <div class="col-md-6">
-                            <h4>Normal Users</h4>
-                            <hr>
-                            <ul class="list-group">
-                              <% userList.filter(u=> u.role !== 'admin').forEach(normal => { %>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                  <%= normal.name %>
-                                    <span class="badge bg-secondary rounded-pill">
-                                      <%= normal.post_count %> posts
-                                    </span>
-                                </li>
-                                <% }) %>
-                            </ul>
+                  <!-- Aden Enhancement-->
+                  <h2>Approval List :</h2>
+
+                  <div class="row">
+                    <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                      <%if(histogram_table[hp].is_approved===0){%>
+                        <div class="col-md-4 mb-4">
+                          <div class="card">
+                            <div class="card-body">
+                              <h5 class="card-title">
+                                <%= histogram_table[hp].title %>
+                              </h5>
+                              <p class="card-text"><strong>Category:</strong>
+                                <%= histogram_table[hp].categories %>
+                              </p>
+                              <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
+                                alt="<%= histogram_table[hp].title %>">
+                              <p class="card-text">
+                                <%= histogram_table[hp].caption %>
+                              </p>
+                              <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%=
+                                      histogram_table[hp].posted_role %>)</em></p>
+
+                              <!-- Aden Delete part -->
+                              <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
+                                <button class="btn btn-danger">Delete</button>
+                              </form>
+                              <br>
+                              <!--Aden Enchancement Approval button-->
+                              <form action="/approvePost/<%= histogram_table[hp].postId %>" method="post">
+                                <button class="btn btn-primary">Approve</button>
+                              </form>
+
+
+
+
+
+                              <%}%>
+                            </div>
                           </div>
                         </div>
-                        <% } %>
+                        <%}%>
 
 
-                          <!-- Admin Home -->
-                          <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
-                            <h2>All User Posts (Admin View)</h2>
-
-                            <!--Danish's Search bar-->
-                            <form id="search-form" method="GET" action="/searched">
-
-                              <label style="font-weight:bold; font-size:16px; color:#333;">Search By:</label>
-
-                              <div class="search-type-selectors" style="margin:8px 0;">
-                                <label style="display:block; margin-bottom:6px; color:#444;">
-                                  <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"
-                                    style="margin-right:6px;"> Search by Title
-                                </label>
-                                <label style="display:block; margin-bottom:6px; color:#444;">
-                                  <input type="radio" name="searchType" value="category" onclick="categorySearch()"
-                                    style="margin-right:6px;"> Search by Category
-                                </label>
-                                <label style="display:block; margin-bottom:6px; color:#444;">
-                                  <input type="radio" name="searchType" value="user" onclick="userSearch()"
-                                    style="margin-right:6px;">
-                                  Search by User
-                                </label>
-                              </div>
-
-
-                              <div class="search-fields" style="margin-top:10px;">
-                                <div id="title-field" class="field-container">
-                                  <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1"
-                                    required
-                                    style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px;">
-                                </div>
-
-                                <div id="category-field" class="field-container" hidden>
-                                  <select name="categoryQuery" id="q2" disabled required
-                                    style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
-                                    <option value="">-- Select a category --</option>
-                                    <option value="Military">Military</option>
-                                    <option value="Culture">Culture</option>
-                                    <option value="Politics">Politics</option>
-                                    <option value="Archaeology">Archaeology</option>
-                                    <option value="Other">Other</option>
-                                  </select>
-                                </div>
-
-                                <div id="user-field" class="field-container" hidden>
-                                  <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3"
-                                    disabled required
-                                    style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
-                                </div>
-                              </div>
-
-                              <button type="submit"
-                                style="margin-top:15px; padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer;">
-                                Search
-                              </button><br>
-                            </form>
-
-
-
-                            <div class="row">
-                              <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
-                                <%if(histogram_table[hp].is_approved===1){%>
-                                  <div class="col-md-4 mb-4">
-                                    <div class="card shadow-sm">
-                                      <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
-                                        alt="<%= histogram_table[hp].title %>">
-                                      <div class="card-body">
-                                        <h5 class="card-title">
-                                          <%= histogram_table[hp].title %>
-                                        </h5>
-                                        <p class="card-text"><strong>Category:</strong>
-                                          <%= histogram_table[hp].categories %>
-                                        </p>
-                                        <p class="card-text">
-                                          <%= histogram_table[hp].caption %>
-                                        </p>
-                                        <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%=
-                                                histogram_table[hp].posted_role %>)</em></p>
-                                        <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
-                                          <button class="btn btn-danger">Delete</button>
-                                        </form>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <% } %>
-                                    <% } %>
+                          <!-- User Role List with Post Counts -->
+                          <h3 class="mt-5">User List</h3>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <h4>Admins</h4>
+                              <hr>
+                              <ul class="list-group mb-4">
+                                <% userList.filter(u=> u.role === 'admin').forEach(admin => { %>
+                                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <%= admin.name %>
+                                      <span class="badge bg-primary rounded-pill">
+                                        <%= admin.post_count %> posts
+                                      </span>
+                                  </li>
+                                  <% }) %>
+                              </ul>
                             </div>
-                            <% } %>
 
-                              <!-- Normal User Home -->
-                              <% if (!user || user.role !=='admin' ) { %>
-                                <h2>Histogram Entries</h2>
+                            <div class="col-md-6">
+                              <h4>Normal Users</h4>
+                              <hr>
+                              <ul class="list-group">
+                                <% userList.filter(u=> u.role !== 'admin').forEach(normal => { %>
+                                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <%= normal.name %>
+                                      <span class="badge bg-secondary rounded-pill">
+                                        <%= normal.post_count %> posts
+                                      </span>
+                                  </li>
+                                  <% }) %>
+                              </ul>
+                            </div>
+                          </div>
+                          <% } %>
 
 
-                                <!--Danish's Search bar-->
-                                <form id="search-form" method="GET" action="/searched">
+                            <!-- Admin Home -->
+                            <% if (user && user.role==='admin' && activePage==='adminHome' ) { %>
+                              <h2>All User Posts (Admin View)</h2>
 
-                                  <label style="font-weight:bold; font-size:16px; color:#333;">Search By:</label>
+                              <!--Danish's Search bar-->
+                              <form id="search-form" method="GET" action="/searched">
 
-                                  <div class="search-type-selectors" style="margin:8px 0;">
-                                    <label style="display:block; margin-bottom:6px; color:#444;">
-                                      <input type="radio" name="searchType" value="title" checked
-                                        onclick="titleSearch()" style="margin-right:6px;"> Search by Title
-                                    </label>
-                                    <label style="display:block; margin-bottom:6px; color:#444;">
-                                      <input type="radio" name="searchType" value="category" onclick="categorySearch()"
-                                        style="margin-right:6px;"> Search by Category
-                                    </label>
-                                    <label style="display:block; margin-bottom:6px; color:#444;">
-                                      <input type="radio" name="searchType" value="user" onclick="userSearch()"
-                                        style="margin-right:6px;">
-                                      Search by User
-                                    </label>
+                                <label style="font-weight:bold; font-size:16px; color:#333;">Search By:</label>
+
+                                <div class="search-type-selectors" style="margin:8px 0;">
+                                  <label style="display:block; margin-bottom:6px; color:#444;">
+                                    <input type="radio" name="searchType" value="title" checked onclick="titleSearch()"
+                                      style="margin-right:6px;"> Search by Title
+                                  </label>
+                                  <label style="display:block; margin-bottom:6px; color:#444;">
+                                    <input type="radio" name="searchType" value="category" onclick="categorySearch()"
+                                      style="margin-right:6px;"> Search by Category
+                                  </label>
+                                  <label style="display:block; margin-bottom:6px; color:#444;">
+                                    <input type="radio" name="searchType" value="user" onclick="userSearch()"
+                                      style="margin-right:6px;">
+                                    Search by User
+                                  </label>
+                                </div>
+
+
+                                <div class="search-fields" style="margin-top:10px;">
+                                  <div id="title-field" class="field-container">
+                                    <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1"
+                                      required
+                                      style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px;">
                                   </div>
 
-                                  <div class="search-fields" style="margin-top:10px;">
-                                    <div id="title-field" class="field-container">
-                                      <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1"
-                                        required
-                                        style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px;">
-                                    </div>
-
-                                    <div id="category-field" class="field-container" hidden>
-                                      <select name="categoryQuery" id="q2" disabled required
-                                        style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
-                                        <option value="">-- Select a category --</option>
-                                        <option value="Military">Military</option>
-                                        <option value="Culture">Culture</option>
-                                        <option value="Politics">Politics</option>
-                                        <option value="Archaeology">Archaeology</option>
-                                        <option value="Other">Other</option>
-                                      </select>
-                                    </div>
-
-                                    <div id="user-field" class="field-container" hidden>
-                                      <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3"
-                                        disabled required
-                                        style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
-                                    </div>
+                                  <div id="category-field" class="field-container" hidden>
+                                    <select name="categoryQuery" id="q2" disabled required
+                                      style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
+                                      <option value="">-- Select a category --</option>
+                                      <option value="Military">Military</option>
+                                      <option value="Culture">Culture</option>
+                                      <option value="Politics">Politics</option>
+                                      <option value="Archaeology">Archaeology</option>
+                                      <option value="Other">Other</option>
+                                    </select>
                                   </div>
 
-                                  <button type="submit"
-                                    style="margin-top:15px; padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer;">
-                                    Search
-                                  </button><br>
-                                </form>
+                                  <div id="user-field" class="field-container" hidden>
+                                    <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3"
+                                      disabled required
+                                      style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
+                                  </div>
+                                </div>
+
+                                <button type="submit"
+                                  style="margin-top:15px; padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer;">
+                                  Search
+                                </button><br>
+                              </form>
 
 
-                                <div class="row">
-                                  <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
-                                    <%if(histogram_table[hp].is_approved===1){%>
-                                      <div class="col-md-4 mb-4">
-                                        <div class="card">
-                                          <div class="card-body">
-                                            <h5 class="card-title">
-                                              <%= histogram_table[hp].title %>
-                                            </h5>
-                                            <p class="card-text"><strong>Category:</strong>
-                                              <%= histogram_table[hp].categories %>
-                                            </p>
-                                            <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
-                                              alt="<%= histogram_table[hp].title %>">
-                                            <p class="card-text">
-                                              <%= histogram_table[hp].caption %>
-                                            </p>
-                                            <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (
-                                                  <%= histogram_table[hp].posted_role %>)</em></p>
-                                            <!-- Aden Delete part -->
-                                            <%if(user.user_id===histogram_table[hp].user_id){%>
-                                              <form action="/deletePost/<%= histogram_table[hp].postId %>"
-                                                method="post">
-                                                <button class="btn btn-danger">Delete</button>
-                                              </form>
-                                              <%}%>
-                                          </div>
+
+                              <div class="row">
+                                <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                                  <%if(histogram_table[hp].is_approved===1){%>
+                                    <div class="col-md-4 mb-4">
+                                      <div class="card shadow-sm">
+                                        <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
+                                          alt="<%= histogram_table[hp].title %>">
+                                        <div class="card-body">
+                                          <h5 class="card-title">
+                                            <%= histogram_table[hp].title %>
+                                          </h5>
+                                          <p class="card-text"><strong>Category:</strong>
+                                            <%= histogram_table[hp].categories %>
+                                          </p>
+                                          <p class="card-text">
+                                            <%= histogram_table[hp].caption %>
+                                          </p>
+                                          <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (<%=
+                                                  histogram_table[hp].posted_role %>)</em></p>
+                                          <form action="/deletePost/<%= histogram_table[hp].postId %>" method="post">
+                                            <button class="btn btn-danger">Delete</button>
+                                          </form>
                                         </div>
                                       </div>
+                                    </div>
+                                    <% } %>
                                       <% } %>
+                              </div>
+                              <% } %>
+
+                                <!-- Normal User Home -->
+                                <% if (!user || user.role !=='admin' ) { %>
+                                  <h2>Histogram Entries</h2>
+
+
+                                  <!--Danish's Search bar-->
+                                  <form id="search-form" method="GET" action="/searched">
+
+                                    <label style="font-weight:bold; font-size:16px; color:#333;">Search By:</label>
+
+                                    <div class="search-type-selectors" style="margin:8px 0;">
+                                      <label style="display:block; margin-bottom:6px; color:#444;">
+                                        <input type="radio" name="searchType" value="title" checked
+                                          onclick="titleSearch()" style="margin-right:6px;"> Search by Title
+                                      </label>
+                                      <label style="display:block; margin-bottom:6px; color:#444;">
+                                        <input type="radio" name="searchType" value="category"
+                                          onclick="categorySearch()" style="margin-right:6px;"> Search by Category
+                                      </label>
+                                      <label style="display:block; margin-bottom:6px; color:#444;">
+                                        <input type="radio" name="searchType" value="user" onclick="userSearch()"
+                                          style="margin-right:6px;">
+                                        Search by User
+                                      </label>
+                                    </div>
+
+                                    <div class="search-fields" style="margin-top:10px;">
+                                      <div id="title-field" class="field-container">
+                                        <input type="text" name="titleQuery" placeholder="Enter post title..." id="q1"
+                                          required
+                                          style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px;">
+                                      </div>
+
+                                      <div id="category-field" class="field-container" hidden>
+                                        <select name="categoryQuery" id="q2" disabled required
+                                          style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
+                                          <option value="">-- Select a category --</option>
+                                          <option value="Military">Military</option>
+                                          <option value="Culture">Culture</option>
+                                          <option value="Politics">Politics</option>
+                                          <option value="Archaeology">Archaeology</option>
+                                          <option value="Other">Other</option>
+                                        </select>
+                                      </div>
+
+                                      <div id="user-field" class="field-container" hidden>
+                                        <input type="text" name="userQuery" placeholder="Enter name of user..." id="q3"
+                                          disabled required
+                                          style="width:25%; padding:8px; border:1px solid #bbb; border-radius:5px; font-size:14px; margin-top:8px;">
+                                      </div>
+                                    </div>
+
+                                    <button type="submit"
+                                      style="margin-top:15px; padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:14px; cursor:pointer;">
+                                      Search
+                                    </button><br>
+                                  </form>
+
+
+                                  <div class="row">
+                                    <% for(let hp=0; hp < histogram_table.length; hp ++) { %>
+                                      <%if(histogram_table[hp].is_approved===1){%>
+                                        <div class="col-md-4 mb-4">
+                                          <div class="card">
+                                            <div class="card-body">
+                                              <h5 class="card-title">
+                                                <%= histogram_table[hp].title %>
+                                              </h5>
+                                              <p class="card-text"><strong>Category:</strong>
+                                                <%= histogram_table[hp].categories %>
+                                              </p>
+                                              <img src="/images/<%= histogram_table[hp].image %>" class="card-img-top"
+                                                alt="<%= histogram_table[hp].title %>">
+                                              <p class="card-text">
+                                                <%= histogram_table[hp].caption %>
+                                              </p>
+                                              <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (
+                                                    <%= histogram_table[hp].posted_role %>)</em></p>
+                                              <!-- Aden Delete part -->
+                                              <%if(user.user_id===histogram_table[hp].user_id){%>
+                                                <form action="/deletePost/<%= histogram_table[hp].postId %>"
+                                                  method="post">
+                                                  <button class="btn btn-danger">Delete</button>
+                                                </form>
+                                                <%}%>
+                                            </div>
+                                          </div>
+                                        </div>
                                         <% } %>
-                                </div>
-                                <% } %>
+                                          <% } %>
+                                  </div>
+                                  <% } %>
 </body>
 
 <script>

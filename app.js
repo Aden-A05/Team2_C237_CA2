@@ -492,14 +492,14 @@ app.post('/deletePost/:id', checkAuthenticated, (req, res) => {
                 connection.query(sql_2, [postid], (error, results) => {
                     if (error) {
                         console.log('Error in trying to delete the post:', error)
-                        if(is_admin){
+                        if (is_admin) {
                             return res.redirect('/admin/home')
-                        }else{return res.redirect('/home')}
+                        } else { return res.redirect('/home') }
                     } else { // Redirect user back to home page when the delete operation is successfull
-                        if(is_admin){
+                        if (is_admin) {
                             return res.redirect('/admin/home')
-                        }else{return res.redirect('/home')}
-                    } 
+                        } else { return res.redirect('/home') }
+                    }
                 });
             } else { //If the user is not the owner of the post and not the admin 
                 req.flash('error', 'You dont have the permission to delete other people post.');
@@ -532,50 +532,71 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
     });
 });
 
+
 // Admin Analytics Dashboard - Done by Ka Fai (Enhancement)
-app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
-  const sqlPosts = 'SELECT COUNT(*) AS totalPosts FROM histogram_table';
-  const sqlUsers = 'SELECT COUNT(*) AS totalUsers FROM user_credentials';
-  const sqlCategories = 'SELECT categories, COUNT(*) AS count FROM histogram_table GROUP BY categories';
-  const sqlUsersList = 'SELECT u.name, u.role, COUNT(h.postId) AS post_count FROM user_credentials u LEFT JOIN histogram_table h ON u.user_id = h.user_id GROUP BY u.user_id, u.name, u.role ORDER BY u.role DESC, u.name ASC';
-  const sqlPosts_admin_approval = 'SELECT h.*, u.name AS posted_by, u.role AS posted_role FROM histogram_table h INNER JOIN user_credentials u ON h.user_id = u.user_id ORDER BY h.postId DESC';
+app.get('/admin/dashboard', checkAuthenticated, (req, res) => {
+    const sqlApproved = 'SELECT COUNT(postId) AS approvedPosts FROM histogram_table WHERE is_approved = 1';
+    const sqlPending = 'SELECT COUNT(postId) AS pendingPosts FROM histogram_table WHERE is_approved = 0';
+    const sqlUsers = 'SELECT COUNT(user_id) AS totalUsers FROM user_credentials';
+    const sqlCategories = `
+    SELECT categories, COUNT(postId) AS post_count
+    FROM histogram_table
+    WHERE is_approved = 1
+    GROUP BY categories
+  `;
+    const sqlUsersList = `
+    SELECT u.name, u.role, COUNT(h.postId) AS post_count
+    FROM user_credentials u
+    LEFT JOIN histogram_table h ON u.user_id = h.user_id AND h.is_approved = 1
+    GROUP BY u.user_id, u.name, u.role
+    ORDER BY u.role DESC, u.name ASC
+  `;
+    const sqlPosts = `
+    SELECT h.*, u.name AS posted_by, u.role AS posted_role
+    FROM histogram_table h
+    JOIN user_credentials u ON h.user_id = u.user_id
+    ORDER BY h.postId DESC
+  `;
 
+    connection.query(sqlApproved, (err1, approvedResult) => {
+        if (err1) return console.log(err1);
 
+        connection.query(sqlPending, (err2, pendingResult) => {
+            if (err2) return console.log(err2);
 
-  connection.query(sqlPosts, (err1, postsCount) => {
-    if (err1) return res.send('Error fetching posts count');
+            connection.query(sqlUsers, (err3, usersResult) => {
+                if (err3) return console.log(err3);
 
-    connection.query(sqlUsers, (err2, usersCount) => {
-      if (err2) return res.send('Error fetching users count');
+                connection.query(sqlCategories, (err4, categoriesResult) => {
+                    if (err4) return console.log(err4);
 
-      connection.query(sqlCategories, (err3, categoriesResult) => {
-        if (err3) return res.send('Error fetching categories data');
+                    connection.query(sqlUsersList, (err5, usersList) => {
+                        if (err5) return console.log(err5);
 
-        connection.query(sqlUsersList, (err4, usersList) => {
-          if (err4) return res.send('Error fetching user list');
+                        connection.query(sqlPosts, (err6, postsResult) => {
+                            if (err6) return console.log(err6);
 
-
-          connection.query(sqlPosts_admin_approval, (err5, approvalPosts) => {
-            if (err5) return res.send('Error fetching approval posts');
-
-            res.render('home', {
-              activePage: 'adminDashboard',
-              totalPosts: postsCount[0].totalPosts,
-              totalUsers: usersCount[0].totalUsers,
-              categoriesData: categoriesResult,
-              userList: usersList,
-              user: req.session.user,
-              histogram_table: approvalPosts,
-              errorMessage: req.flash('error'),
-              approvedMessage: req.flash('approved', 'Post has been approved')
-
+                            res.render('home', {
+                                activePage: 'adminDashboard',
+                                totalPosts: approvedResult[0].approvedPosts,
+                                pendingPosts: pendingResult[0].pendingPosts,
+                                totalUsers: usersResult[0].totalUsers,
+                                categoriesData: categoriesResult,
+                                userList: usersList,
+                                histogram_table: postsResult, 
+                                user: req.session.user,
+                                errorMessage: req.flash('error'),
+                                approvedMessage: req.flash('approved') || []
+                            });
+                        });
+                    });
+                });
             });
-          });
         });
-      });
     });
-  });
 });
+
+
 
 
 // Danish's search function
