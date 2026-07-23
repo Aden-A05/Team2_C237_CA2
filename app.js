@@ -534,7 +534,7 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
 
 
 // Admin Analytics Dashboard - Done by Ka Fai (Enhancement)
-app.get('/admin/dashboard', checkAuthenticated, (req, res) => {
+app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
     const sqlApproved = 'SELECT COUNT(postId) AS approvedPosts FROM histogram_table WHERE is_approved = 1';
     const sqlPending = 'SELECT COUNT(postId) AS pendingPosts FROM histogram_table WHERE is_approved = 0';
     const sqlUsers = 'SELECT COUNT(user_id) AS totalUsers FROM user_credentials';
