@@ -289,7 +289,7 @@ app.get('/editPost/:id', checkAuthenticated, (req, res) => {
                 error.message
             );
 
-            return res.send('Error retrieving post');
+            return res.send('Error retrieving post.');
         }
 
         if (results.length > 0) {
