@@ -275,57 +275,51 @@ app.get('/home', checkAuthenticated, (req, res) => {
 
 // Evan - Part 4: Editing existing information
 
-// Open the edit form
+// Display current post information
 app.get('/editPost/:id', checkAuthenticated, (req, res) => {
     const postId = req.params.id;
 
-    const sql = `
-        SELECT *
-        FROM histogram_table
-        WHERE postId = ?
-    `;
+    const sql =
+        'SELECT * FROM histogram_table WHERE postId = ?';
 
     connection.query(sql, [postId], (error, results) => {
         if (error) {
-            console.log('Error retrieving post:', error);
-            return res.redirect('/home');
-        }
-
-        if (results.length === 0) {
-            req.flash('error', 'Post not found.');
-            return res.redirect('/home');
-        }
-
-        const post = results[0];
-
-        const isAdmin =
-            req.session.user.role === 'admin';
-
-        const isOwner =
-            Number(req.session.user.user_id) ===
-            Number(post.user_id);
-
-        // Normal users can edit only their own posts
-        if (!isAdmin && !isOwner) {
-            req.flash(
-                'error',
-                'You do not have permission to edit this post.'
+            console.error(
+                'Database query error:',
+                error.message
             );
 
-            return res.redirect('/home');
+            return res.send('Error retrieving post');
         }
 
-        res.render('edit', {
-            post: post,
-            activePage: 'editPost',
-            user: req.session.user,
-            errorMessage: req.flash('error')
-        });
+        if (results.length > 0) {
+            const post = results[0];
+
+            const isAdmin =
+                req.session.user.role === 'admin';
+
+            const isOwner =
+                req.session.user.user_id === post.user_id;
+
+            if (isAdmin || isOwner) {
+                res.render('edit', {
+                    post: post,
+                    activePage: 'editPost',
+                    user: req.session.user
+                });
+            } else {
+                res.send(
+                    'You do not have permission to edit this post.'
+                );
+            }
+        } else {
+            res.send('Post not found');
+        }
     });
 });
 
 
-// Save the edited information
+// Update the post information
 app.post(
     '/editPost/:id',
     checkAuthenticated,
@@ -339,122 +333,77 @@ app.post(
             caption
         } = req.body;
 
-        // Server-side validation
-        if (
-            !title ||
-            !categories ||
-            !caption ||
-            !caption.trim()
-        ) {
-            req.flash(
-                'error',
-                'Title, category and caption are required.'
-            );
+        // Retrieve the current image filename from edit.ejs
+        let image = req.body.currentImage;
 
-            return res.redirect(`/editPost/${postId}`);
+        // Use the new image if one is uploaded
+        if (req.file) {
+            image = req.file.filename;
         }
 
-        if (caption.length > 300) {
-            req.flash(
-                'error',
-                'Caption cannot exceed 300 characters.'
-            );
+        let sql;
+        let values;
 
-            return res.redirect(`/editPost/${postId}`);
+        // Admin can update any post
+        if (req.session.user.role === 'admin') {
+            sql = `
+                UPDATE histogram_table
+                SET title = ?,
+                    categories = ?,
+                    image = ?,
+                    caption = ?
+                WHERE postId = ?
+            `;
+
+            values = [
+                title,
+                categories,
+                image,
+                caption,
+                postId
+            ];
+        } else {
+            // Normal users can update only their own posts
+            sql = `
+                UPDATE histogram_table
+                SET title = ?,
+                    categories = ?,
+                    image = ?,
+                    caption = ?
+                WHERE postId = ?
+                AND user_id = ?
+            `;
+
+            values = [
+                title,
+                categories,
+                image,
+                caption,
+                postId,
+                req.session.user.user_id
+            ];
         }
-
-        // Retrieve the original post first
-        const selectSql = `
-            SELECT *
-            FROM histogram_table
-            WHERE postId = ?
-        `;
 
         connection.query(
-            selectSql,
-            [postId],
-            (selectError, results) => {
-                if (selectError) {
-                    console.log(
-                        'Error checking post:',
-                        selectError
+            sql,
+            values,
+            (error, results) => {
+                if (error) {
+                    console.error(
+                        'Error updating post:',
+                        error
                     );
 
-                    return res.redirect('/home');
-                }
-
-                if (results.length === 0) {
-                    req.flash('error', 'Post not found.');
-                    return res.redirect('/home');
-                }
-
-                const post = results[0];
-
-                const isAdmin =
-                    req.session.user.role === 'admin';
-
-                const isOwner =
-                    Number(req.session.user.user_id) ===
-                    Number(post.user_id);
-
-                if (!isAdmin && !isOwner) {
-                    req.flash(
-                        'error',
-                        'You do not have permission to edit this post.'
-                    );
-
-                    return res.redirect('/home');
-                }
-
-                // Keep the old image if no new image is selected
-                const image = req.file
-                    ? req.file.filename
-                    : post.image;
-
-                const updateSql = `
-                    UPDATE histogram_table
-                    SET title = ?,
-                        categories = ?,
-                        image = ?,
-                        caption = ?
-                    WHERE postId = ?
-                `;
-
-                const values = [
-                    title.trim(),
-                    categories,
-                    image,
-                    caption.trim(),
-                    postId
-                ];
-
-                connection.query(
-                    updateSql,
-                    values,
-                    (updateError) => {
-                        if (updateError) {
-                            console.log(
-                                'Error updating post:',
-                                updateError
-                            );
-
-                            req.flash(
-                                'error',
-                                'Unable to update the post.'
-                            );
-
-                            return res.redirect(
-                                `/editPost/${postId}`
-                            );
-                        }
-
-                        if (isAdmin) {
-                            return res.redirect('/admin/home');
-                        }
-
+                    res.send('Error updating post');
+                } else {
+                    if (
+                        req.session.user.role === 'admin'
+                    ) {
+                        res.redirect('/admin/home');
+                    } else {
                         res.redirect('/home');
                     }
-                );
+                }
             }
         );
     }
