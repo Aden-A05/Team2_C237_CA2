@@ -245,7 +245,7 @@ app.post('/addPost', upload.single('image'), (req, res) => {
         // Redirect based on role
         if (req.session.user && req.session.user.role === 'admin') {
             res.redirect('/admin/home');
-        } else {
+        } else { 
             res.redirect('/home');
         }
     });
