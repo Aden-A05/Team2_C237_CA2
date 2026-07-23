@@ -533,17 +533,12 @@ app.get('/admin/home', checkAuthenticated, checkAdmin, (req, res) => {
 });
 
 
-// Admin Analytics Dashboard - Done by Ka Fai (Enhancement)
+// Admin Analytics Dashboard - Done by the team (Enhancement)
 app.get('/admin/dashboard', checkAuthenticated, checkAdmin, (req, res) => {
     const sqlApproved = 'SELECT COUNT(postId) AS approvedPosts FROM histogram_table WHERE is_approved = 1';
     const sqlPending = 'SELECT COUNT(postId) AS pendingPosts FROM histogram_table WHERE is_approved = 0';
     const sqlUsers = 'SELECT COUNT(user_id) AS totalUsers FROM user_credentials';
-    const sqlCategories = `
-    SELECT categories, COUNT(postId) AS post_count
-    FROM histogram_table
-    WHERE is_approved = 1
-    GROUP BY categories
-  `;
+    const sqlCategories = `SELECT categories, COUNT(postId) AS post_count FROM histogram_table WHERE is_approved = 1 GROUP BY categories`;
     const sqlUsersList = `
     SELECT u.name, u.role, COUNT(h.postId) AS post_count
     FROM user_credentials u
