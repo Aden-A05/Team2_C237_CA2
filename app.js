@@ -394,7 +394,7 @@ app.post(
                         error
                     );
 
-                    res.send('Error updating post');
+                    res.send('Error updating post.');
                 } else {
                     if (
                         req.session.user.role === 'admin'
