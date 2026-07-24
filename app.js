@@ -12,7 +12,7 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }
 }));
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 //Multer setup for file uploads : 
 const storage = multer.diskStorage({
@@ -629,4 +629,6 @@ app.post('/approvePost/:id', checkAdmin, (req, res) => {
 });
 
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+});
