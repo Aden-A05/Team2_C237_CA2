@@ -100,7 +100,7 @@ app.post('/', (req, res) => {
         if (result.length > 0) {
             req.session.user = result[0];
 
-            // Redirect based on role
+            // Redirect based on roles - Raj
             if (req.session.user.role === 'admin') {
                 res.redirect('/admin/dashboard');
             } else {
@@ -159,7 +159,7 @@ app.post('/register', (req, res) => {
                 );
 
 
-                // Duplicate email
+                // Duplicate email error - Raj
                 if (error.code === 'ER_DUP_ENTRY') {
 
                     return res.render('register', {
@@ -302,7 +302,7 @@ app.get('/editPost/:id', checkAuthenticated, (req, res) => {
                 req.session.user.user_id === post.user_id;
 
             if (isAdmin || isOwner) {
-                res.render('edit', {
+                res.render('editPost', {
                     post: post,
                     activePage: 'editPost',
                     user: req.session.user

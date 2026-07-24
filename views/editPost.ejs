@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Edit Post</title>
+
+  <link
+    rel="stylesheet"
+    href="/css/navbar.css"
+  >
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+</head>
+
+<body class="container mt-4">
+
+  <%- include('partials/navbar') %>
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-body">
+
+      <h2 class="mb-4">
+        Edit Post
+      </h2>
+
+      <form
+        action="/editPost/<%= post.postId %>"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+
+        <!-- Current title -->
+        <div class="mb-3">
+          <label for="title" class="form-label">
+            Title:
+          </label>
+
+          <input
+            type="text"
+            id="title"
+            name="title"
+            class="form-control"
+            value="<%= post.title %>"
+            required
+          >
+        </div>
+
+        <!-- Current category -->
+        <div class="mb-3">
+          <label for="categories" class="form-label">
+            Category:
+          </label>
+
+          <select
+            id="categories"
+            name="categories"
+            class="form-select"
+            required
+          >
+            <option
+              value="Military"
+              <%= post.categories === 'Military'
+                ? 'selected'
+                : '' %>
+            >
+              Military
+            </option>
+
+            <option
+              value="Culture"
+              <%= post.categories === 'Culture'
+                ? 'selected'
+                : '' %>
+            >
+              Culture
+            </option>
+
+            <option
+              value="Politics"
+              <%= post.categories === 'Politics'
+                ? 'selected'
+                : '' %>
+            >
+              Politics
+            </option>
+
+            <option
+              value="Archaeology"
+              <%= post.categories === 'Archaeology'
+                ? 'selected'
+                : '' %>
+            >
+              Archaeology
+            </option>
+
+            <option
+              value="Other"
+              <%= post.categories === 'Other'
+                ? 'selected'
+                : '' %>
+            >
+              Other
+            </option>
+          </select>
+        </div>
+
+        <!-- Current image -->
+        <div class="mb-3">
+          <label class="form-label">
+            Current Image:
+          </label>
+
+          <% if (post.image) { %>
+            <div>
+              <img
+                src="/images/<%= post.image %>"
+                width="300"
+                class="img-thumbnail mb-3"
+                alt="Current image"
+              >
+            </div>
+          <% } %>
+
+          <!-- Store the current image filename -->
+          <input
+            type="hidden"
+            name="currentImage"
+            value="<%= post.image || '' %>"
+          >
+
+          <label for="image" class="form-label">
+            New Image:
+          </label>
+
+          <input
+            type="file"
+            id="image"
+            name="image"
+            class="form-control"
+            accept="image/*"
+          >
+
+          <div class="form-text">
+            Leave this blank to keep the current image.
+          </div>
+        </div>
+
+        <!-- Current caption -->
+        <div class="mb-3">
+          <label for="caption" class="form-label">
+            Caption:
+          </label>
+
+          <textarea
+            id="caption"
+            name="caption"
+            class="form-control"
+            rows="5"
+            maxlength="300"
+            required
+          ><%= post.caption %></textarea>
+
+          <div class="form-text">
+            Maximum 300 characters.
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-success"
+        >
+          Update Post
+        </button>
+
+        <a
+          href="<%= user.role === 'admin'
+            ? '/admin/home'
+: '/home' %>"
+          class="btn btn-secondary"
+        >
+          Cancel
+        </a>
+
+      </form>
+    </div>
+  </div>
+
+</body>
+
+</html>

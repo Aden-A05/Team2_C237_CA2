@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="navbar-container">
 
-    <a href="/" class="navbar-brand">
+    <a href="/home" class="navbar-brand">
       <div class="brand-logo">H</div>
 
       <div class="brand-details">
@@ -31,7 +31,6 @@
 
       <% if (user && user.role === 'admin') { %>
 
-        <!-- Admin Home -->
         <a
           href="/admin/home"
           class="navbar-link <%= activePage === 'adminHome' ? 'active' : '' %>"
@@ -43,7 +42,6 @@
           <span>Admin Home</span>
         </a>
 
-        <!-- Admin Dashboard -->
         <a
           href="/admin/dashboard"
           class="navbar-link <%= activePage === 'adminDashboard' ? 'active' : '' %>"
@@ -57,7 +55,6 @@
 
       <% } else { %>
 
-        <!-- Normal User Home -->
         <a
           href="/home"
           class="navbar-link <%= activePage === 'home' ? 'active' : '' %>"
@@ -69,7 +66,6 @@
           <span>Home</span>
         </a>
 
-        <!-- Normal User Add Post -->
         <a
           href="/addPost"
           class="navbar-link <%= activePage === 'addPost' ? 'active' : '' %>"
@@ -83,7 +79,6 @@
 
       <% } %>
 
-      <!-- Log Out shown to both users and admins -->
       <a href="/logout" class="navbar-link logout-link">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M10 17v-2h4V9h-4V7h6v10h-6zm-1-3 1.4-1.4L8.8 11H3V9h5.8l1.6-1.6L9 6l-4 4 4 4z"/>

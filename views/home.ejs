@@ -42,8 +42,6 @@
               });
             </script>
             <% } %>
-
-
               
 
 
@@ -317,13 +315,17 @@
                                               </p>
                                               <p class="card-text"><em>Posted by: <%= histogram_table[hp].posted_by %> (
                                                     <%= histogram_table[hp].posted_role %>)</em></p>
-                                              <!-- Aden Delete part -->
+                                              <!-- Aden Delete part & Raj Edit post-->
                                               <%if(user.user_id===histogram_table[hp].user_id){%>
                                                 <form action="/deletePost/<%= histogram_table[hp].postId %>"
                                                   method="post">
                                                   <button class="btn btn-danger">Delete</button>
                                                 </form>
                                                 <%}%>
+                                                <% if (user.user_id === histogram_table[hp].user_id) { %>
+
+                                              <a href="/editPost/<%= histogram_table[hp].postId %>" class="btn btn-primary" >Edit</a>
+                                              <% } %>
                                             </div>
                                           </div>
                                         </div>
